@@ -1,4 +1,15 @@
 import React from "react";
+import { Link, NavLink } from "react-router";
+
+const navItems = [
+	{ label: "Home", to: "/" },
+	{ label: "About", to: "/about" },
+	{ label: "Bikes", to: "/bikes" },
+	{ label: "Package", to: "/package" },
+	{ label: "Service", to: "/service" },
+	{ label: "Blog", to: "/blog" },
+	{ label: "Contact", to: "/contact" },
+];
 
 const Navbar = () => {
 	return (
@@ -15,75 +26,32 @@ const Navbar = () => {
 
 				{/* Nav Links */}
 				<ul className="hidden md:flex items-center gap-10 text-[18px] font-medium">
-					<li>
-						<a
-							href="#"
-							className="text-blue-600 hover:text-blue-700 transition"
-						>
-							Home
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							About
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							Bikes
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							Package
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							Service
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							Blog
-						</a>
-					</li>
-
-					<li>
-						<a
-							href="#"
-							className="text-black hover:text-blue-600 transition"
-						>
-							Contact
-						</a>
-					</li>
+					{navItems.map((item) => (
+						<li key={item.to}>
+							<NavLink
+								to={item.to}
+								className={({ isActive }) =>
+									`transition ${
+										isActive
+											? "text-blue-600 hover:text-blue-700"
+											: "text-black hover:text-blue-600"
+									}`
+								}
+							>
+								{item.label}
+							</NavLink>
+						</li>
+					))}
 				</ul>
 
 				{/* Button */}
 				<div>
-					<button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition">
+					<Link
+						to="/package"
+						className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition"
+					>
 						Book Now
-					</button>
+					</Link>
 				</div>
 			</div>
 		</nav>
