@@ -88,6 +88,11 @@ const reviews = [
   },
 ];
 
+const service = {
+    title: "Our Services",
+    breadcrumb: "Home / Pages / Service"
+}
+
 const Service = () => {
   const reviewsPerPage = 2;
   const reviewPages = Array.from(
@@ -101,7 +106,7 @@ const Service = () => {
   return (
     <div className="bg-white">
 
-        {/* <TopSection data = {{title="Our Services", breadcrumb="Home / Pages / Service"}} /> */}
+        <TopSection data = {service} />
 
       {/* Hero Section */}
       <section className="bg-gray-100 py-20">
@@ -123,9 +128,9 @@ const Service = () => {
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-xl transition duration-300"
+              className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-xl transition duration-300 text-center"
             >
-              <div className="mb-6">{service.icon}</div>
+              <div className="flex justify-center mb-4">{service.icon}</div>
 
               <h3 className="text-2xl font-semibold mb-4 text-gray-900">
                 {service.title}
@@ -140,7 +145,7 @@ const Service = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-[url(https://media.istockphoto.com/id/1190475811/photo/rush-in-the-city.webp?a=1&b=1&s=612x612&w=0&k=20&c=pgEobykYrVwHxzRyCKixA6TSA4wh4yCyj_aY9TuqLm4=)] w-full h-[350px] bg-cover bg-center bg-no-repeat mb-8">
+    <section className="bg-[url(https://media.istockphoto.com/id/1190475811/photo/rush-in-the-city.webp?a=1&b=1&s=612x612&w=0&k=20&c=pgEobykYrVwHxzRyCKixA6TSA4wh4yCyj_aY9TuqLm4=)] bg-no-repeat bg-cover bg-centre h-[350px]">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 text-center pt-32">
           {stats.map((item, index) => (
             <div key={index} className="text-white">
