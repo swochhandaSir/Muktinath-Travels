@@ -1,5 +1,7 @@
 import React from 'react'
 import heroImage from '../assets/hero.jpg'
+import VechileCategories from '../components/VechileCategories'
+import ProcessSection from '../components/ProcessSection'
 
 const Home = () => {
   return (
@@ -38,6 +40,12 @@ const Home = () => {
             WhatsApp
           </button>
         </div>
+      </section>
+      <section>
+        <VechileCategories/>
+      </section>
+      <section>
+        <ProcessSection/>
       </section>
     </>
   )

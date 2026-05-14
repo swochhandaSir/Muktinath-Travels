@@ -123,7 +123,7 @@ const Service = () => {
       </section>
 
       {/* Service Cards */}
-      <section className="py-20">
+      <section className="pb-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <div
