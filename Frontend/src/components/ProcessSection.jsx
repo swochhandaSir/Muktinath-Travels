@@ -23,11 +23,11 @@ const ProcessSection = () => {
 
   return (
     <section className="relative overflow-hidden bg-[url(https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1920&q=80)] bg-cover bg-center py-24 text-white">
-    <div className="absolute inset-0 bg-black/90"></div>
+    <div className="absolute inset-0 bg-black/85"></div>
     <div className="relative z-10 mx-auto max-w-7xl px-6">
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="text-4xl font-bold leading-tight md:text-5xl">
-          Mukinath Travel Agency
+          Travel Agency
           <span className="block">Process</span>
         </h2>
         <p className="mt-6 text-base font-medium leading-relaxed">
