@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
 import {
-	Car,
+	Bike,
 	LayoutDashboard,
 	Image as ImageIcon,
 	Info,
@@ -31,20 +31,20 @@ const navSections = [
 	{
 		title: "Dashboard",
 		items: [
-			{ label: "Hero Section", icon: ImageIcon, href: "#" },
-			{ label: "About Section", icon: Info, href: "#" },
-			{ label: "Services", icon: Wrench, href: "#" },
-			{ label: "Cars", icon: Car, href: "#cars", active: true },
-			{ label: "Packages", icon: Package, href: "#" },
-			{ label: "Blog", icon: BookOpen, href: "#" },
-			{ label: "Features", icon: Sparkles, href: "#" },
-			{ label: "Testimonials", icon: MessageSquareQuote, href: "#" },
-			{ label: "Counters", icon: Hash, href: "#" },
-			{ label: "Car Bookings", icon: CalendarDays, href: "#" },
-			{ label: "Tour Package Bookings", icon: ClipboardList, href: "#" },
-			{ label: "Contact Messages", icon: Mail, href: "#" },
-			{ label: "Branch", icon: MapPin, href: "#" },
-			{ label: "Site Settings", icon: Settings, href: "#" },
+			// { label: "Hero Section", icon: ImageIcon, href: "#" },
+			// { label: "About Section", icon: Info, href: "#" },
+			// { label: "Services", icon: Wrench, href: "#" },
+			{ label: "Bikes", icon: Bike, href: "#bikes", active: true },
+			// { label: "Packages", icon: Package, href: "#" },
+			// { label: "Blog", icon: BookOpen, href: "#" },
+			// { label: "Features", icon: Sparkles, href: "#" },
+			// { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
+			// { label: "Counters", icon: Hash, href: "#" },
+			// { label: "Car Bookings", icon: CalendarDays, href: "#" },
+			// { label: "Tour Package Bookings", icon: ClipboardList, href: "#" },
+			// { label: "Contact Messages", icon: Mail, href: "#" },
+			// { label: "Branch", icon: MapPin, href: "#" },
+			// { label: "Site Settings", icon: Settings, href: "#" },
 		],
 	},
 ];
