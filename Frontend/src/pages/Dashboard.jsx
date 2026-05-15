@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import AdminLayout from "../layouts/AdminLayout";
 import { apiUrl } from "../lib/api";
@@ -7,23 +7,13 @@ function emptyDraft() {
 	return {
 		name: "",
 		price: "",
-		rating: "5",
-		transmission: "AT",
-		fuel: "petrol",
-		year: String(new Date().getFullYear()),
-		mileage: "",
 	};
 }
 
-function carToDraft(car) {
+function bikeToDraft(bike) {
 	return {
-		name: car.name,
-		price: String(car.price),
-		rating: String(car.rating || "5"),
-		transmission: car.transmission,
-		fuel: car.fuel,
-		year: String(car.year),
-		mileage: car.mileage === "—" ? "" : car.mileage,
+		name: bike.name,
+		price: String(bike.price),
 	};
 }
 
@@ -45,7 +35,7 @@ async function parseErrorMessage(res) {
 }
 
 const Dashboard = () => {
-	const [cars, setCars] = useState([]);
+	const [bikes, setBikes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [listError, setListError] = useState("");
 	const [formModal, setFormModal] = useState(null);
@@ -54,25 +44,26 @@ const Dashboard = () => {
 	const [formSubmitting, setFormSubmitting] = useState(false);
 	const [deleteTarget, setDeleteTarget] = useState(null);
 	const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+	const imageInputRef = useRef(null);
 
-	const loadCars = useCallback(async () => {
+	const loadBikes = useCallback(async () => {
 		setListError("");
 		setLoading(true);
 		try {
 			const res = await fetch(apiUrl("/api/bikes"));
 			if (!res.ok) throw new Error(await parseErrorMessage(res));
-			setCars(await res.json());
+			setBikes(await res.json());
 		} catch (err) {
 			setListError(err.message || "Failed to load bikes.");
-			setCars([]);
+			setBikes([]);
 		} finally {
 			setLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
-		loadCars();
-	}, [loadCars]);
+		loadBikes();
+	}, [loadBikes]);
 
 	useEffect(() => {
 		if (!formModal) return;
@@ -98,13 +89,15 @@ const Dashboard = () => {
 	const openAdd = () => {
 		setDraft(emptyDraft());
 		setFormError("");
+		if (imageInputRef.current) imageInputRef.current.value = "";
 		setFormModal({ mode: "add" });
 	};
 
-	const openEdit = (car) => {
-		setDraft(carToDraft(car));
+	const openEdit = (bike) => {
+		setDraft(bikeToDraft(bike));
 		setFormError("");
-		setFormModal({ mode: "edit", car });
+		if (imageInputRef.current) imageInputRef.current.value = "";
+		setFormModal({ mode: "edit", bike });
 	};
 
 	const closeForm = () => {
@@ -116,7 +109,7 @@ const Dashboard = () => {
 		e.preventDefault();
 		const name = draft.name.trim();
 		const priceNum = Number.parseFloat(draft.price);
-		const yearNum = Number.parseInt(draft.year, 10);
+		const file = imageInputRef.current?.files?.[0];
 
 		if (!name) {
 			setFormError("Name is required.");
@@ -126,47 +119,29 @@ const Dashboard = () => {
 			setFormError("Enter a valid price per day.");
 			return;
 		}
-		if (!["1", "2", "3", "4", "5"].includes(draft.rating)) {
-			setFormError("Choose a rating from 1 to 5.");
-			return;
-		}
-		if (!Number.isFinite(yearNum) || yearNum < 1900 || yearNum > 2100) {
-			setFormError("Enter a valid year.");
+		if (formModal.mode === "add" && !file) {
+			setFormError("Choose an image file.");
 			return;
 		}
 
-		const body = {
-			name,
-			price: priceNum,
-			rating: draft.rating,
-			transmission: draft.transmission,
-			fuel: draft.fuel.trim() || "petrol",
-			year: yearNum,
-			mileage: draft.mileage.trim() || "—",
-		};
+		const fd = new FormData();
+		fd.append("name", name);
+		fd.append("price", String(priceNum));
+		if (file) fd.append("image", file);
 
 		setFormSubmitting(true);
 		setFormError("");
 		try {
-			if (formModal.mode === "add") {
-				const res = await fetch(apiUrl("/api/bikes"), {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(body),
-				});
-				if (!res.ok) throw new Error(await parseErrorMessage(res));
-			} else {
-				const res = await fetch(
-					apiUrl(`/api/bikes/${formModal.car.id}`),
-					{
-						method: "PUT",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify(body),
-					},
-				);
-				if (!res.ok) throw new Error(await parseErrorMessage(res));
-			}
-			await loadCars();
+			const url =
+				formModal.mode === "add"
+					? apiUrl("/api/bikes")
+					: apiUrl(`/api/bikes/${formModal.bike.id}`);
+			const res = await fetch(url, {
+				method: formModal.mode === "add" ? "POST" : "PUT",
+				body: fd,
+			});
+			if (!res.ok) throw new Error(await parseErrorMessage(res));
+			await loadBikes();
 			closeForm();
 		} catch (err) {
 			setFormError(err.message || "Something went wrong.");
@@ -185,7 +160,7 @@ const Dashboard = () => {
 			if (!res.ok) {
 				throw new Error(await parseErrorMessage(res));
 			}
-			await loadCars();
+			await loadBikes();
 			setDeleteTarget(null);
 		} catch (err) {
 			setListError(err.message || "Failed to delete bike.");
@@ -215,7 +190,7 @@ const Dashboard = () => {
 					{listError}
 					<button
 						type="button"
-						onClick={() => loadCars()}
+						onClick={() => loadBikes()}
 						className="ml-3 font-semibold text-red-900 underline hover:no-underline dark:text-red-100"
 					>
 						Retry
@@ -225,30 +200,18 @@ const Dashboard = () => {
 
 			<div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 				<div className="overflow-x-auto">
-					<table className="w-full min-w-[720px] text-left text-sm">
+					<table className="w-full min-w-[520px] text-left text-sm">
 						<thead>
 							<tr className="border-b border-slate-200 bg-[#e8eef4] text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
 								<th className="whitespace-nowrap px-4 py-3 font-semibold">SN</th>
+								<th className="whitespace-nowrap px-4 py-3 font-semibold">
+									Image
+								</th>
 								<th className="whitespace-nowrap px-4 py-3 font-semibold">
 									Name
 								</th>
 								<th className="whitespace-nowrap px-4 py-3 font-semibold">
 									Price/Day
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 font-semibold">
-									Rating
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 font-semibold">
-									Transmission
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 font-semibold">
-									Fuel
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 font-semibold">
-									Year
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 font-semibold">
-									Mileage
 								</th>
 								<th className="whitespace-nowrap px-4 py-3 font-semibold">
 									Actions
@@ -259,23 +222,23 @@ const Dashboard = () => {
 							{loading ? (
 								<tr>
 									<td
-										colSpan={9}
+										colSpan={5}
 										className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
 									>
 										Loading bikes...
 									</td>
 								</tr>
-							) : cars.length === 0 ? (
+							) : bikes.length === 0 ? (
 								<tr>
 									<td
-										colSpan={9}
+										colSpan={5}
 										className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
 									>
 										No bikes yet. Click &quot;+ Add Bike&quot; to create one.
 									</td>
 								</tr>
 							) : (
-								cars.map((row, i) => (
+								bikes.map((row, i) => (
 									<tr
 										key={row.id}
 										className={`border-b border-slate-100 dark:border-slate-800 ${
@@ -287,26 +250,22 @@ const Dashboard = () => {
 										<td className="px-4 py-3 text-slate-600 dark:text-slate-300">
 											{i + 1}
 										</td>
+										<td className="px-4 py-2">
+											{row.image ? (
+												<img
+													src={row.image}
+													alt=""
+													className="h-12 w-16 rounded object-cover"
+												/>
+											) : (
+												<span className="text-slate-400">—</span>
+											)}
+										</td>
 										<td className="max-w-[280px] px-4 py-3 font-medium text-slate-800 dark:text-slate-100">
 											{row.name}
 										</td>
 										<td className="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">
 											{row.price}
-										</td>
-										<td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-											{row.rating}
-										</td>
-										<td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-											{row.transmission}
-										</td>
-										<td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-											{row.fuel}
-										</td>
-										<td className="px-4 py-3 text-slate-600 dark:text-slate-300">
-											{row.year}
-										</td>
-										<td className="whitespace-nowrap px-4 py-3 text-slate-600 dark:text-slate-300">
-											{row.mileage}
 										</td>
 										<td className="px-4 py-3">
 											<div className="flex flex-wrap gap-2">
@@ -343,13 +302,13 @@ const Dashboard = () => {
 					<div
 						role="dialog"
 						aria-modal="true"
-						aria-labelledby="car-form-title"
+						aria-labelledby="bike-form-title"
 						className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-900"
 						onClick={(e) => e.stopPropagation()}
 					>
 						<div className="flex items-start justify-between gap-4">
 							<h2
-								id="car-form-title"
+								id="bike-form-title"
 								className="text-lg font-semibold text-slate-800 dark:text-slate-100"
 							>
 								{formModal.mode === "add" ? "Add bike" : "Edit bike"}
@@ -373,132 +332,69 @@ const Dashboard = () => {
 							)}
 
 							<div>
-								<label htmlFor="car-name" className={labelClass}>
+								<label htmlFor="bike-name" className={labelClass}>
 									Name
 								</label>
 								<input
-									id="car-name"
+									id="bike-name"
 									className={inputClass}
 									value={draft.name}
 									onChange={(e) =>
 										setDraft((d) => ({ ...d, name: e.target.value }))
 									}
-									placeholder="Route or vehicle name"
+									placeholder="Bike name"
 									autoComplete="off"
 									disabled={formSubmitting}
 								/>
 							</div>
 
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-								<div>
-									<label htmlFor="car-price" className={labelClass}>
-										Price / day
-									</label>
-									<input
-										id="car-price"
-										inputMode="decimal"
-										className={inputClass}
-										value={draft.price}
-										onChange={(e) =>
-											setDraft((d) => ({ ...d, price: e.target.value }))
-										}
-										placeholder="8000"
-										disabled={formSubmitting}
-									/>
-								</div>
-                                <div>
-									<label htmlFor="car-mileage" className={labelClass}>
-										Mileage{" "}
+							<div>
+								<label htmlFor="bike-price" className={labelClass}>
+									Price / day
+								</label>
+								<input
+									id="bike-price"
+									inputMode="decimal"
+									className={inputClass}
+									value={draft.price}
+									onChange={(e) =>
+										setDraft((d) => ({ ...d, price: e.target.value }))
+									}
+									placeholder="8000"
+									disabled={formSubmitting}
+								/>
+							</div>
+
+							<div>
+								<label htmlFor="bike-image" className={labelClass}>
+									Image{" "}
+									{formModal.mode === "edit" && (
 										<span className="font-normal text-slate-500">
-											(optional)
+											(optional — leave empty to keep current)
 										</span>
-									</label>
-									<input
-										id="car-mileage"
-										className={inputClass}
-										value={draft.mileage}
-										onChange={(e) =>
-											setDraft((d) => ({ ...d, mileage: e.target.value }))
-										}
-										placeholder="18 km/l"
-										disabled={formSubmitting}
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-								<div>
-									<label htmlFor="car-transmission" className={labelClass}>
-										Transmission
-									</label>
-									<select
-										id="car-transmission"
-										className={inputClass}
-										value={draft.transmission}
-										onChange={(e) =>
-											setDraft((d) => ({
-												...d,
-												transmission: e.target.value,
-											}))
-										}
-										disabled={formSubmitting}
-									>
-										<option value="AT">AT</option>
-										<option value="MT">MT</option>
-									</select>
-								</div>
-								<div>
-									<label htmlFor="car-fuel" className={labelClass}>
-										Fuel
-									</label>
-									<input
-										id="car-fuel"
-										className={inputClass}
-										value={draft.fuel}
-										onChange={(e) =>
-											setDraft((d) => ({ ...d, fuel: e.target.value }))
-										}
-										disabled={formSubmitting}
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-								<div>
-									<label htmlFor="car-year" className={labelClass}>
-										Year
-									</label>
-									<input
-										id="car-year"
-										inputMode="numeric"
-										className={inputClass}
-										value={draft.year}
-										onChange={(e) =>
-											setDraft((d) => ({ ...d, year: e.target.value }))
-										}
-										disabled={formSubmitting}
-									/>
-								</div>
-								<div>
-									<label htmlFor="bike-rating" className={labelClass}>
-										Rating
-									</label>
-									<select
-										id="bike-rating"
-										className={inputClass}
-										value={draft.rating}
-										onChange={(e) =>
-											setDraft((d) => ({ ...d, rating: e.target.value }))
-										}
-										disabled={formSubmitting}
-									>
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-									</select>
-								</div>
+									)}
+								</label>
+								<input
+									id="bike-image"
+									ref={imageInputRef}
+									type="file"
+									accept="image/*"
+									className={inputClass}
+									disabled={formSubmitting}
+								/>
+								{formModal.mode === "edit" && formModal.bike?.image && (
+									<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+										Current:{" "}
+										<a
+											href={formModal.bike.image}
+											target="_blank"
+											rel="noreferrer"
+											className="text-teal-600 underline dark:text-teal-400"
+										>
+											view image
+										</a>
+									</p>
+								)}
 							</div>
 
 							<div className="flex flex-wrap justify-end gap-2 pt-2">
