@@ -34,8 +34,8 @@ const navSections = [
 			// { label: "Hero Section", icon: ImageIcon, href: "#" },
 			// { label: "About Section", icon: Info, href: "#" },
 			// { label: "Services", icon: Wrench, href: "#" },
-			{ label: "Bikes", icon: Bike, href: "#bikes", active: true },
-			// { label: "Packages", icon: Package, href: "#" },
+			{ label: "Bikes", icon: Bike, href: "#bikes" },
+			{ label: "Packages", icon: Package, href: "#packages" },
 			// { label: "Blog", icon: BookOpen, href: "#" },
 			// { label: "Features", icon: Sparkles, href: "#" },
 			// { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
@@ -111,19 +111,11 @@ function AdminLayout({ children }) {
 							<ul className="space-y-0.5">
 								{section.items.map((item) => {
 									const Icon = item.icon;
-									const active = item.active;
 									return (
 										<li key={item.label}>
 											<a
 												href={item.href}
-												className={`
-                          flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors
-                          ${
-														active
-															? "bg-white/10 font-medium text-white"
-															: "text-slate-400 hover:bg-white/5 hover:text-white"
-													}
-                        `}
+												className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
 											>
 												<Icon className="h-4 w-4 shrink-0 opacity-90" />
 												{item.label}
