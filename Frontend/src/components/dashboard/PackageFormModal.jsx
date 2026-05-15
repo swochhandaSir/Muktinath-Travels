@@ -1,0 +1,282 @@
+import Modal from "./Modal";
+import { inputClass, labelClass } from "./bikeFormStyles";
+import { emptyItineraryDay } from "../../hooks/usePackagesAdmin";
+
+export default function PackageFormModal({
+	open,
+	mode,
+	pkg,
+	draft,
+	onDraftChange,
+	formError,
+	submitting,
+	imageInputRef,
+	onClose,
+	onSubmit,
+}) {
+	const isAdd = mode === "add";
+
+	const updateItinerary = (index, field, value) => {
+		onDraftChange((d) => ({
+			...d,
+			itinerary: d.itinerary.map((day, i) =>
+				i === index ? { ...day, [field]: value } : day,
+			),
+		}));
+	};
+
+	const addItineraryDay = () => {
+		onDraftChange((d) => ({
+			...d,
+			itinerary: [...d.itinerary, emptyItineraryDay(d.itinerary.length)],
+		}));
+	};
+
+	const removeItineraryDay = (index) => {
+		onDraftChange((d) => {
+			if (d.itinerary.length <= 1) return d;
+			return {
+				...d,
+				itinerary: d.itinerary.filter((_, i) => i !== index),
+			};
+		});
+	};
+
+	return (
+		<Modal
+			open={open}
+			onClose={onClose}
+			titleId="package-form-title"
+			title={isAdd ? "Add package" : "Edit package"}
+			panelClassName="max-w-2xl"
+			closeDisabled={submitting}
+		>
+			<form className="mt-4 space-y-4" onSubmit={onSubmit}>
+				{formError && (
+					<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+						{formError}
+					</p>
+				)}
+
+				<div>
+					<label htmlFor="pkg-title" className={labelClass}>
+						Title
+					</label>
+					<input
+						id="pkg-title"
+						className={inputClass}
+						value={draft.title}
+						onChange={(e) =>
+							onDraftChange((d) => ({ ...d, title: e.target.value }))
+						}
+						placeholder="Kathmandu to Illam Tour Package"
+						autoComplete="off"
+						disabled={submitting}
+					/>
+				</div>
+
+				<div className="grid gap-4 sm:grid-cols-2">
+					<div>
+						<label htmlFor="pkg-location" className={labelClass}>
+							Location
+						</label>
+						<input
+							id="pkg-location"
+							className={inputClass}
+							value={draft.location}
+							onChange={(e) =>
+								onDraftChange((d) => ({ ...d, location: e.target.value }))
+							}
+							placeholder="Illam"
+							disabled={submitting}
+						/>
+					</div>
+					<div>
+						<label htmlFor="pkg-duration" className={labelClass}>
+							Duration
+						</label>
+						<input
+							id="pkg-duration"
+							className={inputClass}
+							value={draft.duration}
+							onChange={(e) =>
+								onDraftChange((d) => ({ ...d, duration: e.target.value }))
+							}
+							placeholder="4 Days-3 Nights"
+							disabled={submitting}
+						/>
+					</div>
+				</div>
+
+				<div className="grid gap-4 sm:grid-cols-2">
+					<div>
+						<label htmlFor="pkg-group-size" className={labelClass}>
+							Group size
+						</label>
+						<input
+							id="pkg-group-size"
+							inputMode="numeric"
+							className={inputClass}
+							value={draft.groupSize}
+							onChange={(e) =>
+								onDraftChange((d) => ({ ...d, groupSize: e.target.value }))
+							}
+							placeholder="11"
+							disabled={submitting}
+						/>
+					</div>
+					<div>
+						<label htmlFor="pkg-price" className={labelClass}>
+							Price (Rs.)
+						</label>
+						<input
+							id="pkg-price"
+							inputMode="decimal"
+							className={inputClass}
+							value={draft.price}
+							onChange={(e) =>
+								onDraftChange((d) => ({ ...d, price: e.target.value }))
+							}
+							placeholder="10000"
+							disabled={submitting}
+						/>
+					</div>
+				</div>
+
+				<div>
+					<label htmlFor="pkg-explore-link" className={labelClass}>
+						Explore link{" "}
+						<span className="font-normal text-slate-500">(optional)</span>
+					</label>
+					<input
+						id="pkg-explore-link"
+						className={inputClass}
+						value={draft.exploreLink}
+						onChange={(e) =>
+							onDraftChange((d) => ({ ...d, exploreLink: e.target.value }))
+						}
+						placeholder="/packages/illam-tour or https://..."
+						disabled={submitting}
+					/>
+				</div>
+
+				<div>
+					<label htmlFor="pkg-image" className={labelClass}>
+						Image{" "}
+						{!isAdd && (
+							<span className="font-normal text-slate-500">
+								(optional — leave empty to keep current)
+							</span>
+						)}
+					</label>
+					<input
+						id="pkg-image"
+						ref={imageInputRef}
+						type="file"
+						accept="image/*"
+						className={inputClass}
+						disabled={submitting}
+					/>
+					{!isAdd && pkg?.image && (
+						<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+							Current:{" "}
+							<a
+								href={pkg.image}
+								target="_blank"
+								rel="noreferrer"
+								className="text-teal-600 underline dark:text-teal-400"
+							>
+								view image
+							</a>
+						</p>
+					)}
+				</div>
+
+				<fieldset className="space-y-3 rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+					<legend className="px-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+						Outline itinerary
+					</legend>
+					{draft.itinerary.map((day, index) => (
+						<div
+							key={index}
+							className="grid gap-2 rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50 sm:grid-cols-[140px_1fr_auto]"
+						>
+							<div>
+								<label
+									htmlFor={`pkg-day-${index}`}
+									className="text-xs font-medium text-slate-600 dark:text-slate-400"
+								>
+									Day
+								</label>
+								<input
+									id={`pkg-day-${index}`}
+									className={inputClass}
+									value={day.dayNumber}
+									onChange={(e) =>
+										updateItinerary(index, "dayNumber", e.target.value)
+									}
+									placeholder="Day 01"
+									disabled={submitting}
+								/>
+							</div>
+							<div>
+								<label
+									htmlFor={`pkg-desc-${index}`}
+									className="text-xs font-medium text-slate-600 dark:text-slate-400"
+								>
+									Description
+								</label>
+								<input
+									id={`pkg-desc-${index}`}
+									className={inputClass}
+									value={day.description}
+									onChange={(e) =>
+										updateItinerary(index, "description", e.target.value)
+									}
+									placeholder="Journey from Kathmandu to Dharan"
+									disabled={submitting}
+								/>
+							</div>
+							<div className="flex items-end sm:justify-end">
+								<button
+									type="button"
+									onClick={() => removeItineraryDay(index)}
+									disabled={submitting || draft.itinerary.length <= 1}
+									className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+								>
+									Remove
+								</button>
+							</div>
+						</div>
+					))}
+					<button
+						type="button"
+						onClick={addItineraryDay}
+						disabled={submitting}
+						className="rounded-lg border border-dashed border-teal-400 px-3 py-2 text-sm font-medium text-teal-600 hover:bg-teal-50 disabled:opacity-50 dark:text-teal-400 dark:hover:bg-teal-950/30"
+					>
+						+ Add day
+					</button>
+				</fieldset>
+
+				<div className="flex flex-wrap justify-end gap-2 pt-2">
+					<button
+						type="button"
+						onClick={onClose}
+						disabled={submitting}
+						className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						disabled={submitting}
+						className="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600 disabled:opacity-50"
+					>
+						{submitting ? "Saving…" : isAdd ? "Add package" : "Save changes"}
+					</button>
+				</div>
+			</form>
+		</Modal>
+	);
+}

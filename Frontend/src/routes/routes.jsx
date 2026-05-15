@@ -7,13 +7,19 @@ import Contact from '../pages/Contact'
 import Package from '../pages/Package'
 import Service from '../pages/Service'
 import MainLayout from '../layouts/MainLayout'
-import Dashboard from '../pages/Dashboard'
+import AdminLayout from '../layouts/AdminLayout'
+import DashboardBikes from '../pages/DashboardBikes'
+import DashboardPackages from '../pages/DashboardPackages'
 
 function AppRouter() {
     return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<AdminLayout />}>
+                        <Route index element={<Navigate to="bikes" replace />} />
+                        <Route path="bikes" element={<DashboardBikes />} />
+                        <Route path="packages" element={<DashboardPackages />} />
+                    </Route>
                     <Route element={<MainLayout/>}>
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
