@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import {
 	Bike,
 	LayoutDashboard,
@@ -34,8 +34,8 @@ const navSections = [
 			// { label: "Hero Section", icon: ImageIcon, href: "#" },
 			// { label: "About Section", icon: Info, href: "#" },
 			// { label: "Services", icon: Wrench, href: "#" },
-			{ label: "Bikes", icon: Bike, href: "#bikes" },
-			{ label: "Packages", icon: Package, href: "#packages" },
+			{ label: "Bikes", icon: Bike, to: "/dashboard/bikes" },
+			{ label: "Packages", icon: Package, to: "/dashboard/packages" },
 			// { label: "Blog", icon: BookOpen, href: "#" },
 			// { label: "Features", icon: Sparkles, href: "#" },
 			// { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
@@ -49,7 +49,7 @@ const navSections = [
 	},
 ];
 
-function AdminLayout({ children }) {
+function AdminLayout() {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [dark, setDark] = useState(false);
 	const [fs, setFs] = useState(false);
@@ -113,13 +113,19 @@ function AdminLayout({ children }) {
 									const Icon = item.icon;
 									return (
 										<li key={item.label}>
-											<a
-												href={item.href}
-												className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+											<NavLink
+												to={item.to}
+												className={({ isActive }) =>
+													`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors ${
+														isActive
+															? "bg-white/10 text-white"
+															: "text-slate-400 hover:bg-white/5 hover:text-white"
+													}`
+												}
 											>
 												<Icon className="h-4 w-4 shrink-0 opacity-90" />
 												{item.label}
-											</a>
+											</NavLink>
 										</li>
 									);
 								})}
@@ -188,7 +194,9 @@ function AdminLayout({ children }) {
 					</div>
 				</header>
 
-				<main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+				<main className="flex-1 p-4 sm:p-6 lg:p-8">
+					<Outlet />
+				</main>
 
 				<footer className="shrink-0 border-t border-slate-200/80 bg-white py-3 text-center text-xs text-slate-400 dark:border-slate-800 dark:bg-slate-900">
 					{footerYear} © {brandName}
