@@ -1,10 +1,8 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import connectDB from "./src/config/db.js";
 import routes from "./src/routes/index.js";
-
-dotenv.config();
 
 async function start() {
 	try {
