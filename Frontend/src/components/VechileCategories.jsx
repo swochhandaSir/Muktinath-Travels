@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useRef, useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -8,24 +7,16 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
+import { useBooking } from "../context/BookingContext";
 
 // we'll fetch bikes from the backend API; each bike has `name`, `pricePerDay`, `image`
 
-const VehicleInfo = ({ icon: Icon, text }) => (
-  <div className="flex items-center justify-center gap-2 border-r border-gray-300 last:border-r-0">
-    <Icon className="h-4 w-4 text-slate-950" />
-    <span>{text}</span>
-  </div>
-);
-
-const VehicleCard = ({ vehicle }) => {
+const VehicleCard = ({ vehicle, onBookNow }) => {
   const rawPrice = vehicle?.price ?? vehicle?.pricePerDay;
   const priceNum = Number(rawPrice);
   const priceDisplay = Number.isFinite(priceNum)
     ? `Rs ${priceNum.toLocaleString()} / Day`
     : "Price unavailable";
-
-  const bikeId = vehicle?.id || vehicle?._id;
 
   return (
     <motion.div
@@ -54,12 +45,13 @@ const VehicleCard = ({ vehicle }) => {
             {priceDisplay}
           </div>
 
-          <Link
-            to={bikeId ? `/package/${bikeId}` : "/package"}
+          <button
+            type="button"
+            onClick={() => onBookNow(vehicle?.name || "")}
             className="mt-4 inline-block rounded-full bg-blue-600 px-5 py-2 text-center font-semibold text-white transition hover:bg-blue-700"
           >
             Book Now
-          </Link>
+          </button>
         </div>
       </div>
     </motion.div>
@@ -71,6 +63,7 @@ const VechileCategories = () => {
   const [loading, setLoading] = useState(true);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  const { openBookingForm } = useBooking();
 
   useEffect(() => {
     let mounted = true;
@@ -132,7 +125,6 @@ const VechileCategories = () => {
               swiper.params.navigation.prevEl = prevRef.current;
               swiper.params.navigation.nextEl = nextRef.current;
             }}
-            
             spaceBetween={24}
             slidesPerView={1}
             observer
@@ -165,7 +157,7 @@ const VechileCategories = () => {
                   key={vehicle.id || vehicle._id || vehicle.name}
                   className="h-auto"
                 >
-                  <VehicleCard vehicle={vehicle} />
+                  <VehicleCard vehicle={vehicle} onBookNow={openBookingForm} />
                 </SwiperSlide>
               ))}
           </Swiper>

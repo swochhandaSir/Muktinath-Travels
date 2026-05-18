@@ -1,12 +1,15 @@
-import React from 'react'
-import heroImage from '../assets/hero.jpg'
-import VechileCategories from '../components/VechileCategories'
-import ProcessSection from '../components/ProcessSection'
+import React from "react";
+import heroImage from "../assets/hero.jpg";
+import VechileCategories from "../components/VechileCategories";
+import ProcessSection from "../components/ProcessSection";
+import { useBooking } from "../context/BookingContext";
 
 const Home = () => {
+  const { openBookingForm } = useBooking();
+
   return (
     <>
-           <section
+      <section
         className="relative h-screen bg-cover bg-center"
         style={{
           backgroundImage: `url(${heroImage})`,
@@ -25,7 +28,11 @@ const Home = () => {
             Affordable • Reliable • Comfortable
           </p>
 
-          <button className="mt-8 bg-white text-blue-600 px-8 py-4 rounded-2xl text-xl font-semibold hover:bg-gray-200 transition duration-300">
+          <button
+            type="button"
+            onClick={() => openBookingForm()}
+            className="mt-8 bg-white text-blue-600 px-8 py-4 rounded-2xl text-xl font-semibold hover:bg-gray-200 transition duration-300"
+          >
             Book Now
           </button>
         </div>
@@ -42,13 +49,13 @@ const Home = () => {
         </div>
       </section>
       <section>
-        <VechileCategories/>
+        <VechileCategories />
       </section>
       <section>
-        <ProcessSection/>
+        <ProcessSection />
       </section>
     </>
-  )
-} 
+  );
+};
 
-export default Home
+export default Home;
