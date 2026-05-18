@@ -4,13 +4,14 @@ import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import Navbar from "./components/Navbar";
 import AppRouter from "./routes/routes.jsx";
+import { BookingProvider } from "./context/BookingContext";
 
 function App() {
-	return (
-		<>
-			<AppRouter />
-		</>
-	);
+  return (
+    <BookingProvider>
+      <AppRouter />
+    </BookingProvider>
+  );
 }
 
 export default App;
