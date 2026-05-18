@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router";
+import { useCompanyDetails } from "../hooks/useCompanyDetails";
 
 const navItems = [
 	{ label: "Home", to: "/" },
@@ -12,16 +13,25 @@ const navItems = [
 ];
 
 const Navbar = () => {
+	const { details } = useCompanyDetails();
+	const brandName = details?.name || "Please provide CompanyName";
+
 	return (
 		<nav className="w-full border-t border-slate-800 bg-gray-100">
 			<div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
 				{/* Logo */}
 				<div className="flex items-center">
-					<img
-						src="/logo.png"
-						alt="Logo"
-						className="h-10 w-auto"
-					/>
+					{details?.logo ? (
+						<img
+							src={details.logo}
+							alt={`${brandName} logo`}
+							className="h-10 w-auto"
+						/>
+					) : (
+						<Link to="/" className="text-xl font-bold text-slate-900">
+							{brandName}
+						</Link>
+					)}
 				</div>
 
 				{/* Nav Links */}

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router";
 import {
 	Bike,
+	Building2,
 	LayoutDashboard,
 	Image as ImageIcon,
 	Info,
@@ -35,6 +36,11 @@ const navSections = [
 			// { label: "About Section", icon: Info, href: "#" },
 			// { label: "Services", icon: Wrench, href: "#" },
 			{ label: "Bikes", icon: Bike, to: "/dashboard/bikes" },
+			{
+				label: "Company Details",
+				icon: Building2,
+				to: "/dashboard/companyDetails",
+			},
 			{ label: "Packages", icon: Package, to: "/dashboard/packages" },
 			// { label: "Blog", icon: BookOpen, href: "#" },
 			// { label: "Features", icon: Sparkles, href: "#" },
