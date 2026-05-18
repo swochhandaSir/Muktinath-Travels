@@ -9,6 +9,7 @@ import Service from '../pages/Service'
 import MainLayout from '../layouts/MainLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import DashboardBikes from '../pages/DashboardBikes'
+import DashboardCompanyDetails from '../pages/DashboardCompanyDetails'
 import DashboardPackages from '../pages/DashboardPackages'
 
 function AppRouter() {
@@ -18,6 +19,7 @@ function AppRouter() {
                     <Route path="/dashboard" element={<AdminLayout />}>
                         <Route index element={<Navigate to="bikes" replace />} />
                         <Route path="bikes" element={<DashboardBikes />} />
+                        <Route path="companyDetails" element={<DashboardCompanyDetails />} />
                         <Route path="packages" element={<DashboardPackages />} />
                     </Route>
                     <Route element={<MainLayout/>}>

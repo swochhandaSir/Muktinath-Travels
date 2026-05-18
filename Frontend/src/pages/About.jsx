@@ -4,8 +4,15 @@ import {
   Target,
   CheckCircle,
 } from "lucide-react";
+import { useCompanyDetails } from "../hooks/useCompanyDetails";
 
 const About = () => {
+  const { details } = useCompanyDetails();
+  const companyName = details?.name || "Mukinath Travel Agency";
+  const about =
+    details?.about ||
+    "We are a trusted car rental service dedicated to providing safe, reliable, and comfortable transportation solutions. Whether you're traveling for business or leisure, our goal is to make your journey smooth, affordable, and hassle-free with a wide range of well-maintained vehicles and exceptional customer support.";
+
   return (
     <section className="bg-[#f5f5f5] py-16 px-6 lg:px-16">
       {/* MAIN GRID */}
@@ -17,16 +24,11 @@ const About = () => {
           {/* TOP CONTENT */}
           <div>
             <h1 className="text-4xl md:text-6xl font-bold text-[#07142f] leading-tight">
-              Mukinath Travel Agency
+              {companyName}
             </h1>
 
             <p className="mt-6 text-gray-600 text-lg leading-10">
-              We are a trusted car rental service dedicated to providing safe,
-              reliable, and comfortable transportation solutions. Whether
-              you're traveling for business or leisure, our goal is to make
-              your journey smooth, affordable, and hassle-free with a wide
-              range of well-maintained vehicles and exceptional customer
-              support.
+              {about}
             </p>
 
             {/* CARDS */}
