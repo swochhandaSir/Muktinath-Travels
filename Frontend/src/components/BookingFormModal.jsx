@@ -75,6 +75,7 @@ export default function BookingFormModal() {
       selectedBike && typeof selectedBike === "object"
         ? selectedBike.id || selectedBike._id || ""
         : "";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({ ...initialForm, bike: selectedBikeId });
     setErrors({});
     setSuccessMsg("");
