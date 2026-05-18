@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./dashboard/Modal";
 import { useBooking } from "../context/BookingContext";
 import { apiUrl } from "../lib/api";
+import { parseApiError } from "../lib/parseApiError";
 
 const initialForm = {
   bike: "",
@@ -63,14 +64,21 @@ export default function BookingFormModal() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [bikeOptions, setBikeOptions] = useState([]);
   const [loadingBikes, setLoadingBikes] = useState(false);
 
   useEffect(() => {
     if (!isBookingOpen) return;
-    setForm({ ...initialForm, bike: selectedBike || "" });
+    const selectedBikeId =
+      selectedBike && typeof selectedBike === "object"
+        ? selectedBike.id || selectedBike._id || ""
+        : "";
+    setForm({ ...initialForm, bike: selectedBikeId });
     setErrors({});
     setSuccessMsg("");
+    setSubmitError("");
   }, [isBookingOpen, selectedBike]);
 
   useEffect(() => {
@@ -84,7 +92,14 @@ export default function BookingFormModal() {
         if (!res.ok) throw new Error("Failed to load bikes");
         const data = await res.json();
         if (!mounted) return;
-        setBikeOptions(Array.isArray(data) ? data : []);
+        const bikes = Array.isArray(data) ? data : [];
+        setBikeOptions(bikes);
+        if (selectedBike && typeof selectedBike === "string") {
+          const match = bikes.find((bike) => bike?.name === selectedBike);
+          if (match) {
+            setForm((prev) => ({ ...prev, bike: match.id || match._id || "" }));
+          }
+        }
       } catch {
         if (!mounted) return;
         setBikeOptions([]);
@@ -97,22 +112,48 @@ export default function BookingFormModal() {
     return () => {
       mounted = false;
     };
-  }, [isBookingOpen]);
+  }, [isBookingOpen, selectedBike]);
 
   const updateField = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = validateBookingForm(form);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    setSuccessMsg(
-      "Booking details submitted successfully. We will contact you soon.",
-    );
+    setSubmitting(true);
+    setSubmitError("");
+    setSuccessMsg("");
+    try {
+      const res = await fetch(apiUrl("/api/bike-bookings"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bike: form.bike,
+          customerName: form.fullName.trim(),
+          customerEmail: form.email.trim(),
+          customerPhone: form.phone.trim(),
+          pickupLocation: form.pickupLocation.trim(),
+          returnLocation: form.dropoffLocation.trim(),
+          pickupDate: form.pickupDate,
+          returnDate: form.returnDate,
+          message: form.message.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error(await parseApiError(res));
+      setSuccessMsg(
+        "Booking details submitted successfully. We will contact you soon.",
+      );
+      setForm(initialForm);
+    } catch (err) {
+      setSubmitError(err.message || "Failed to submit booking.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -130,6 +171,12 @@ export default function BookingFormModal() {
           </p>
         )}
 
+        {submitError && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            {submitError}
+          </p>
+        )}
+
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label
@@ -143,6 +190,7 @@ export default function BookingFormModal() {
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
               value={form.bike}
               onChange={(e) => updateField("bike", e.target.value)}
+              disabled={submitting}
             >
               <option value="" disabled>
                 {loadingBikes ? "Loading bikes..." : "Choose your bike"}
@@ -151,7 +199,7 @@ export default function BookingFormModal() {
                 const bikeName = bike?.name || "";
                 const bikeId = bike?.id || bike?._id || bikeName;
                 return (
-                  <option key={bikeId} value={bikeName}>
+                  <option key={bikeId} value={bikeId}>
                     {bikeName}
                   </option>
                 );
@@ -171,8 +219,9 @@ export default function BookingFormModal() {
               id="booking-full-name"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
               placeholder="Enter your name"
-              value={form.fullName}
-              onChange={(e) => updateField("fullName", e.target.value)}
+            value={form.fullName}
+            onChange={(e) => updateField("fullName", e.target.value)}
+            disabled={submitting}
             />
             <FieldError message={errors.fullName} />
           </div>
@@ -191,6 +240,7 @@ export default function BookingFormModal() {
               placeholder="Enter your email"
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.email} />
           </div>
@@ -208,6 +258,7 @@ export default function BookingFormModal() {
               placeholder="Enter phone number"
               value={form.phone}
               onChange={(e) => updateField("phone", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.phone} />
           </div>
@@ -225,6 +276,7 @@ export default function BookingFormModal() {
               placeholder="Pickup location"
               value={form.pickupLocation}
               onChange={(e) => updateField("pickupLocation", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.pickupLocation} />
           </div>
@@ -242,6 +294,7 @@ export default function BookingFormModal() {
               placeholder="Dropoff location"
               value={form.dropoffLocation}
               onChange={(e) => updateField("dropoffLocation", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.dropoffLocation} />
           </div>
@@ -260,6 +313,7 @@ export default function BookingFormModal() {
               placeholder="mm/dd/yyyy"
               value={form.pickupDate}
               onChange={(e) => updateField("pickupDate", e.target.value)}
+              disabled={submitting}
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.pickupDate} />
@@ -279,6 +333,7 @@ export default function BookingFormModal() {
               placeholder="mm/dd/yyyy"
               value={form.returnDate}
               onChange={(e) => updateField("returnDate", e.target.value)}
+              disabled={submitting}
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.returnDate} />
@@ -298,6 +353,7 @@ export default function BookingFormModal() {
             placeholder="Message"
             value={form.message}
             onChange={(e) => updateField("message", e.target.value)}
+            disabled={submitting}
           />
         </div>
 
@@ -305,15 +361,16 @@ export default function BookingFormModal() {
           <button
             type="button"
             onClick={closeBookingForm}
+            disabled={submitting}
             className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)]"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
-            Submit Booking
+            {submitting ? "Submitting..." : "Submit Booking"}
           </button>
         </div>
       </form>

@@ -54,7 +54,7 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onBookNow(vehicle?.name || "");
+              onBookNow(vehicle);
             }}
             className="mt-4 inline-block rounded-full bg-[var(--color-primary)] px-5 py-2 text-center font-semibold text-white transition hover:bg-[var(--color-primary-dark)]"
           >
