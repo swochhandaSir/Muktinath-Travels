@@ -132,10 +132,7 @@ const VechileCategories = () => {
               swiper.params.navigation.prevEl = prevRef.current;
               swiper.params.navigation.nextEl = nextRef.current;
             }}
-            navigation={{
-              prevEl: prevRef.current,
-              nextEl: nextRef.current,
-            }}
+            
             spaceBetween={24}
             slidesPerView={1}
             observer
