@@ -47,7 +47,7 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
 
           <button
             type="button"
-            onClick={() => onBookNow(vehicle?.name || "")}
+            onClick={() => onBookNow(vehicle)}
             className="mt-4 inline-block rounded-full bg-blue-600 px-5 py-2 text-center font-semibold text-white transition hover:bg-blue-700"
           >
             Book Now

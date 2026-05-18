@@ -10,10 +10,10 @@ const BookingContext = createContext(null);
 
 export function BookingProvider({ children }) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedBike, setSelectedBike] = useState("");
+  const [selectedBike, setSelectedBike] = useState(null);
 
-  const openBookingForm = useCallback((bikeName = "") => {
-    setSelectedBike(bikeName || "");
+  const openBookingForm = useCallback((bike = null) => {
+    setSelectedBike(bike || null);
     setIsBookingOpen(true);
   }, []);
 
