@@ -45,8 +45,8 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `transition ${
                     isActive
-                      ? "text-blue-600 hover:text-blue-700"
-                      : "text-black hover:text-blue-600"
+                      ? "text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+                      : "text-black hover:text-[var(--color-primary)]"
                   }`
                 }
               >
@@ -61,7 +61,7 @@ const Navbar = () => {
           <button
             type="button"
             onClick={() => openBookingForm()}
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition"
+            className="inline-block bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-8 py-3 rounded-full font-semibold transition"
           >
             Book Now
           </button>

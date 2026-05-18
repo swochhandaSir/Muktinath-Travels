@@ -31,7 +31,7 @@ const Home = () => {
           <button
             type="button"
             onClick={() => openBookingForm()}
-            className="mt-8 bg-white text-blue-600 px-8 py-4 rounded-2xl text-xl font-semibold hover:bg-gray-200 transition duration-300"
+            className="mt-8 bg-white text-[var(--color-primary)] px-8 py-4 rounded-2xl text-xl font-semibold hover:bg-gray-200 transition duration-300"
           >
             Book Now
           </button>
@@ -39,7 +39,7 @@ const Home = () => {
 
         {/* Floating Buttons */}
         <div className="fixed right-5 bottom-10 flex flex-col gap-4 z-50">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-full shadow-xl font-semibold">
+          <button className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-6 py-4 rounded-full shadow-xl font-semibold">
             📞 Call Us
           </button>
 

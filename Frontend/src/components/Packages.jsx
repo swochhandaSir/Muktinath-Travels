@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
+import { getHighResImage } from "../lib/image";
 
 const PackageCard = ({ pkg }) => {
   const rawPrice = pkg?.price;
@@ -18,56 +19,59 @@ const PackageCard = ({ pkg }) => {
   const packageId = pkg?.id || pkg?._id;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 0, y: 200 }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      transition={{
-        duration: 1,
-      }}
-      className="h-full rounded-lg border border-blue-600 p-4"
+    <Link
+      to={packageId ? `/package/${packageId}` : "/package"}
+      className="block h-full"
     >
-      <div className="h-full w-full rounded-t-lg overflow-hidden hover:shadow-2xl transition duration-300">
-        <img
-          src={
-            pkg?.image || "https://via.placeholder.com/600x400?text=No+Image"
-          }
-          alt={pkg?.title}
-          className="h-44 w-full object-cover"
-        />
+      <motion.div
+        initial={{ opacity: 0, x: 0, y: 200 }}
+        whileInView={{ opacity: 1, x: 0, y: 0 }}
+        transition={{
+          duration: 1,
+        }}
+        className="h-full rounded-lg border border-[var(--color-primary)] p-4 transition hover:shadow-2xl"
+      >
+        <div className="h-full w-full overflow-hidden rounded-t-lg">
+          <img
+            src={
+              getHighResImage(pkg?.image, 800) ||
+              "https://via.placeholder.com/800x533?text=No+Image"
+            }
+            alt={pkg?.title}
+            className="h-44 w-full object-cover"
+          />
 
-        <div className="px-4 py-5 text-center">
-          <h3 className="text-xl font-bold leading-snug text-slate-950">
-            {pkg?.title}
-          </h3>
+          <div className="px-4 py-5 text-center">
+            <h3 className="text-xl font-bold leading-snug text-slate-950">
+              {pkg?.title}
+            </h3>
 
-          <div className="mt-3 space-y-2 text-sm text-gray-600">
-            <div className="flex items-center justify-center gap-2">
-              <MapPin className="h-4 w-4" />
-              <span>{pkg?.location}</span>
+            <div className="mt-3 space-y-2 text-sm text-gray-600">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span>{pkg?.location}</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>{pkg?.duration}</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>Group Size: {pkg?.groupSize}</span>
+              </div>
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>{pkg?.duration}</span>
+
+            <div className="mx-auto mt-4 w-full rounded-full bg-[var(--color-primary)] bg-opacity-10 px-4 py-2 text-lg font-bold text-[var(--color-primary)]">
+              {priceDisplay}
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <Users className="h-4 w-4" />
-              <span>Group Size: {pkg?.groupSize}</span>
+
+            <div className="mt-4 inline-block rounded-full bg-[var(--color-primary)] px-5 py-2 text-center font-semibold text-white transition group-hover:bg-[var(--color-primary-dark)]">
+              Explore
             </div>
           </div>
-
-          <div className="mx-auto mt-4 w-full rounded-full bg-blue-50 px-4 py-2 text-lg font-bold text-blue-600">
-            {priceDisplay}
-          </div>
-
-          <Link
-            to={packageId ? `/package/${packageId}` : "/package"}
-            className="mt-4 inline-block rounded-full bg-blue-600 px-5 py-2 text-center font-semibold text-white transition hover:bg-blue-700"
-          >
-            Explore
-          </Link>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 };
 
@@ -114,7 +118,7 @@ function Packages() {
           <button
             ref={prevRef}
             type="button"
-            className="flex h-11 w-20 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700"
+            className="flex h-11 w-20 items-center justify-center rounded-full bg-[var(--color-primary)] text-white transition hover:bg-[var(--color-primary-dark)]"
             aria-label="Previous packages"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -123,7 +127,7 @@ function Packages() {
           <button
             ref={nextRef}
             type="button"
-            className="flex h-11 w-20 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700"
+            className="flex h-11 w-20 items-center justify-center rounded-full bg-[var(--color-primary)] text-white transition hover:bg-[var(--color-primary-dark)]"
             aria-label="Next packages"
           >
             <ChevronRight className="h-6 w-6" />
