@@ -37,6 +37,11 @@ const navSections = [
 			// { label: "Services", icon: Wrench, href: "#" },
 			{ label: "Bikes", icon: Bike, to: "/dashboard/bikes" },
 			{
+				label: "Bike Bookings",
+				icon: CalendarDays,
+				to: "/dashboard/bikeBookings",
+			},
+			{
 				label: "Company Details",
 				icon: Building2,
 				to: "/dashboard/companyDetails",
