@@ -1,9 +1,10 @@
 import React from 'react'
+import Packages from '../components/Packages';
 
 const Package = () => {
   return (
     <div>
-      Package Page
+      <Packages/>
     </div>
   )
 }
