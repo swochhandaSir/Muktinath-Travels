@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Phone, MessageCircleMore } from "lucide-react";
 import BookingFormModal from "../components/BookingFormModal";
+import PackageBookingFormModal from "../components/PackageBookingFormModal";
 
 const MainLayout = () => {
   return (
@@ -14,7 +15,7 @@ const MainLayout = () => {
       </main>
       {/* Floating Buttons */}
       <div className="fixed right-5 bottom-10 flex flex-col gap-4 z-50">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-full shadow-xl font-semibold">
+        <button className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-6 py-4 rounded-full shadow-xl font-semibold">
           <div className="flex items-center gap-2">
             <Phone />
             <div className="font-medium pl-2">Call Us</div>
@@ -29,6 +30,7 @@ const MainLayout = () => {
         </button>
       </div>
       <BookingFormModal />
+      <PackageBookingFormModal />
       <Footer />
     </div>
   );

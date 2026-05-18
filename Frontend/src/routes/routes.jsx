@@ -9,9 +9,9 @@ import Service from '../pages/Service'
 import MainLayout from '../layouts/MainLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import DashboardBikes from '../pages/DashboardBikes'
-import DashboardBikeBookings from '../pages/DashboardBikeBookings'
 import DashboardCompanyDetails from '../pages/DashboardCompanyDetails'
 import DashboardPackages from '../pages/DashboardPackages'
+import DashboardBikeBookings from '../pages/DashboardBikeBookings'
 
 function AppRouter() {
     return (
@@ -20,9 +20,9 @@ function AppRouter() {
                     <Route path="/dashboard" element={<AdminLayout />}>
                         <Route index element={<Navigate to="bikes" replace />} />
                         <Route path="bikes" element={<DashboardBikes />} />
-                        <Route path="bikeBookings" element={<DashboardBikeBookings />} />
                         <Route path="companyDetails" element={<DashboardCompanyDetails />} />
                         <Route path="packages" element={<DashboardPackages />} />
+                        <Route path="bikeBookings" element={<DashboardBikeBookings />} /> 
                     </Route>
                     <Route element={<MainLayout/>}>
                         <Route path="/" element={<Home />} />
@@ -37,4 +37,4 @@ function AppRouter() {
             </BrowserRouter>
     )}
 
-    export default AppRouter
+export default AppRouter;

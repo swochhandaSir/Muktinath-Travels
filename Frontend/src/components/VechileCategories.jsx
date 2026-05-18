@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
+import { getHighResImage } from "../lib/image";
 import { useBooking } from "../context/BookingContext";
 
 // we'll fetch bikes from the backend API; each bike has `name`, `pricePerDay`, `image`
@@ -25,18 +26,22 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
       transition={{
         duration: 1,
       }}
-      className="h-full rounded-lg border border-blue-600 p-4"
+      className="h-full rounded-lg border border-[var(--color-primary)] p-5"
+      role="button"
+      tabIndex={0}
+      onClick={() => onBookNow(vehicle?.name || "")}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onBookNow(vehicle?.name || "");
+      }}
     >
-      <div className="h-full w-full rounded-t-lg overflow-hidden hover:shadow-2xl transition duration-300">
+      <div className="h-full w-full rounded-t-lg overflow-hidden hover:shadow-2xl transition duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
         <img
-          src={
-            vehicle.image || "https://via.placeholder.com/600x400?text=No+Image"
-          }
+          src={getHighResImage(vehicle.image, 800) || "https://via.placeholder.com/800x533?text=No+Image"}
           alt={vehicle.name}
-          className="h-44 w-full object-cover"
+          className="h-52 w-full object-cover md:h-60"
         />
 
-        <div className="px-4 py-5 text-center">
+        <div className="px-4 py-6 text-center">
           <h3 className="text-xl font-bold leading-snug text-slate-950">
             {vehicle.name}
           </h3>
@@ -47,8 +52,11 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
 
           <button
             type="button"
-            onClick={() => onBookNow(vehicle)}
-            className="mt-4 inline-block rounded-full bg-blue-600 px-5 py-2 text-center font-semibold text-white transition hover:bg-blue-700"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBookNow(vehicle);
+            }}
+            className="mt-4 inline-block rounded-full bg-[var(--color-primary)] px-5 py-2 text-center font-semibold text-white transition hover:bg-[var(--color-primary-dark)]"
           >
             Book Now
           </button>
@@ -103,7 +111,7 @@ const VechileCategories = () => {
             <button
               ref={prevRef}
               type="button"
-              className="flex h-11 w-20 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700"
+              className="flex h-11 w-20 items-center justify-center rounded-full bg-[var(--color-primary)] text-white transition hover:bg-[var(--color-primary-dark)]"
               aria-label="Previous vehicles"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -112,7 +120,7 @@ const VechileCategories = () => {
             <button
               ref={nextRef}
               type="button"
-              className="flex h-11 w-20 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700"
+              className="flex h-11 w-20 items-center justify-center rounded-full bg-[var(--color-primary)] text-white transition hover:bg-[var(--color-primary-dark)]"
               aria-label="Next vehicles"
             >
               <ChevronRight className="h-6 w-6" />

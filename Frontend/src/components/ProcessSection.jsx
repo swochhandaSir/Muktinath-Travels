@@ -68,9 +68,8 @@ const ProcessSection = () => {
           </h2>
 
           <p className="mt-6 text-base font-medium leading-relaxed">
-            Car rental made easy! Follow our simple 3-step process to get on
-            the road in no time. Choose your car, book online, and enjoy your
-            ride!
+            Car rental made easy! Follow our simple 3-step process to get on the
+            road in no time. Choose your car, book online, and enjoy your ride!
           </p>
         </motion.div>
 
@@ -93,7 +92,7 @@ const ProcessSection = () => {
               transition={{ type: "spring", stiffness: 200 }}
               className="relative"
             >
-              <div className="rounded-lg bg-blue-600 px-6 py-6 shadow-xl">
+              <div className="rounded-lg bg-[var(--color-primary)] px-6 py-6 shadow-xl">
                 <h3 className="text-2xl font-medium">{step.title}</h3>
 
                 <p className="mt-3 text-base font-medium leading-relaxed">
@@ -101,7 +100,7 @@ const ProcessSection = () => {
                 </p>
               </div>
 
-              <div className="absolute -bottom-8 right-10 flex h-16 w-16 items-center justify-center rounded-full border border-white bg-blue-600 text-lg font-bold shadow-xl">
+              <div className="absolute -bottom-8 right-10 flex h-16 w-16 items-center justify-center rounded-full border border-white bg-[var(--color-primary)] text-lg font-bold shadow-xl">
                 {step.number}
               </div>
             </motion.div>

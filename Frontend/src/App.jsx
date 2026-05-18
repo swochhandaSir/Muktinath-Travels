@@ -5,11 +5,14 @@ import heroImg from "./assets/hero.png";
 import Navbar from "./components/Navbar";
 import AppRouter from "./routes/routes.jsx";
 import { BookingProvider } from "./context/BookingContext";
+import { PackageBookingProvider } from "./context/PackageBookingContext";
 
 function App() {
   return (
     <BookingProvider>
-      <AppRouter />
+      <PackageBookingProvider>
+        <AppRouter />
+      </PackageBookingProvider>
     </BookingProvider>
   );
 }
