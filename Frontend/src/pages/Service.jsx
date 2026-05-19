@@ -117,7 +117,7 @@ const Service = () => {
 
   return (
     <div className="bg-white">
-      <TopSection data={service} />
+      
 
       {/* Hero Section */}
       <section className="bg-gray-100 py-20">
