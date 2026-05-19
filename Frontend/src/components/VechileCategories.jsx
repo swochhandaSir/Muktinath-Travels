@@ -26,22 +26,16 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
       transition={{
         duration: 1,
       }}
-      className="h-full rounded-lg border border-[var(--color-primary)] p-5"
-      role="button"
-      tabIndex={0}
-      onClick={() => onBookNow(vehicle?.name || "")}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onBookNow(vehicle?.name || "");
-      }}
+      className="h-full rounded-lg border border-[var(--color-primary)] p-4"
     >
-      <div className="h-full w-full rounded-t-lg overflow-hidden hover:shadow-2xl transition duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
+      <div className="h-full w-full rounded-t-lg overflow-hidden hover:shadow-2xl transition duration-300">
         <img
           src={getHighResImage(vehicle.image, 800) || "https://via.placeholder.com/800x533?text=No+Image"}
           alt={vehicle.name}
-          className="h-52 w-full object-cover md:h-60"
+          className="h-44 w-full object-cover"
         />
 
-        <div className="px-4 py-6 text-center">
+        <div className="px-4 py-5 text-center">
           <h3 className="text-xl font-bold leading-snug text-slate-950">
             {vehicle.name}
           </h3>
@@ -52,10 +46,7 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
 
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onBookNow(vehicle);
-            }}
+            onClick={() => onBookNow(vehicle?.name || "")}
             className="mt-4 inline-block rounded-full bg-[var(--color-primary)] px-5 py-2 text-center font-semibold text-white transition hover:bg-[var(--color-primary-dark)]"
           >
             Book Now
