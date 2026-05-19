@@ -25,7 +25,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 
-const brandName = "Vehicle Rental";
+const brandName = "Third Generation Rider Pvt. Ltd.";
 const footerYear = new Date().getFullYear();
 
 const navSections = [
@@ -47,6 +47,11 @@ const navSections = [
         to: "/dashboard/companyDetails",
       },
       { label: "Packages", icon: Package, to: "/dashboard/packages" },
+      {
+        label: "Package Bookings",
+        icon: ClipboardList,
+        to: "/dashboard/packageBookings",
+      },
       // { label: "Blog", icon: BookOpen, href: "#" },
       // { label: "Features", icon: Sparkles, href: "#" },
       // { label: "Testimonials", icon: MessageSquareQuote, href: "#" },

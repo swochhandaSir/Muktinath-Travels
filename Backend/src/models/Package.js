@@ -17,7 +17,9 @@ const packageSchema = new mongoose.Schema(
 		price: { type: Number, required: true, min: 0 },
 		image: { type: String, trim: true, default: "" },
 		itinerary: { type: [itineraryDaySchema], default: [] },
-		exploreLink: { type: String, trim: true, default: "" },
+		tripHighlights: { type: [String], default: [] },
+		inclusions: { type: [String], default: [] },
+		packageExperience: { type: String, trim: true, default: "" },
 	},
 	{ timestamps: true },
 );

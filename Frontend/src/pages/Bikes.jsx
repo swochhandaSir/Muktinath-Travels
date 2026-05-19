@@ -11,7 +11,7 @@ const Bikes = () => {
   return (
     <div>
         <section className="bg-gray-100">
-      <TopSection data = {topSectionData} />
+      {/* <TopSection data = {topSectionData} /> */}
         </section>
         <section>
       <VechileCategories />

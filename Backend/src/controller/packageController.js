@@ -17,7 +17,9 @@ function toDTO(doc) {
 			dayNumber: d.dayNumber,
 			description: d.description,
 		})),
-		exploreLink: o.exploreLink || "",
+		tripHighlights: o.tripHighlights || [],
+		inclusions: o.inclusions || [],
+		packageExperience: o.packageExperience || "",
 	};
 }
 
@@ -46,12 +48,38 @@ function parseItinerary(raw) {
 	return { itinerary };
 }
 
+function parseStringList(raw, label) {
+	if (!raw) return [];
+	let parsed = raw;
+	if (typeof raw === "string") {
+		try {
+			parsed = JSON.parse(raw);
+		} catch {
+			parsed = raw
+				.split(/\r?\n/)
+				.map((item) => item.trim())
+				.filter(Boolean);
+		}
+	}
+	if (!Array.isArray(parsed)) {
+		return { error: `${label} must be a list.` };
+	}
+	const items = parsed
+		.map((item) => (typeof item === "string" ? item.trim() : ""))
+		.filter(Boolean);
+	return { items };
+}
+
 function validatePackageBody(body, res) {
 	const title = body.title;
 	const location = body.location;
 	const duration = body.duration;
 	const groupSize = Number(body.groupSize);
 	const price = Number(body.price);
+	const packageExperience =
+		typeof body.packageExperience === "string"
+			? body.packageExperience.trim()
+			: "";
 
 	if (!title || typeof title !== "string" || !title.trim()) {
 		res.status(400).json({ message: "Title is required." });
@@ -84,8 +112,30 @@ function validatePackageBody(body, res) {
 		return null;
 	}
 
-	const exploreLink =
-		typeof body.exploreLink === "string" ? body.exploreLink.trim() : "";
+	const highlightsResult = parseStringList(body.tripHighlights, "Trip highlights");
+	if (highlightsResult.error) {
+		res.status(400).json({ message: highlightsResult.error });
+		return null;
+	}
+	if (highlightsResult.items.length === 0) {
+		res.status(400).json({ message: "Add at least one trip highlight." });
+		return null;
+	}
+
+	const inclusionsResult = parseStringList(body.inclusions, "Inclusions");
+	if (inclusionsResult.error) {
+		res.status(400).json({ message: inclusionsResult.error });
+		return null;
+	}
+	if (inclusionsResult.items.length === 0) {
+		res.status(400).json({ message: "Add at least one inclusion." });
+		return null;
+	}
+
+	if (!packageExperience) {
+		res.status(400).json({ message: "Package experience is required." });
+		return null;
+	}
 
 	return {
 		title: title.trim(),
@@ -94,7 +144,9 @@ function validatePackageBody(body, res) {
 		groupSize,
 		price,
 		itinerary: itineraryResult.itinerary,
-		exploreLink,
+		tripHighlights: highlightsResult.items,
+		inclusions: inclusionsResult.items,
+		packageExperience,
 	};
 }
 

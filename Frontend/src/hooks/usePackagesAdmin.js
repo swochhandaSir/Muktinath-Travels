@@ -7,6 +7,10 @@ export function emptyItineraryDay(index = 0) {
 	return { dayNumber: `Day ${n}`, description: "" };
 }
 
+export function emptyListItem() {
+	return "";
+}
+
 export function emptyPackageDraft() {
 	return {
 		title: "",
@@ -14,7 +18,9 @@ export function emptyPackageDraft() {
 		duration: "",
 		groupSize: "",
 		price: "",
-		exploreLink: "",
+		packageExperience: "",
+		tripHighlights: [emptyListItem()],
+		inclusions: [emptyListItem()],
 		itinerary: [emptyItineraryDay(0)],
 	};
 }
@@ -26,7 +32,11 @@ export function packageToDraft(pkg) {
 		duration: pkg.duration,
 		groupSize: String(pkg.groupSize),
 		price: String(pkg.price),
-		exploreLink: pkg.exploreLink || "",
+		packageExperience: pkg.packageExperience || "",
+		tripHighlights:
+			pkg.tripHighlights?.length > 0 ? [...pkg.tripHighlights] : [emptyListItem()],
+		inclusions:
+			pkg.inclusions?.length > 0 ? [...pkg.inclusions] : [emptyListItem()],
 		itinerary:
 			pkg.itinerary?.length > 0
 				? pkg.itinerary.map((d) => ({
@@ -43,12 +53,17 @@ function validateDraft(draft) {
 	const duration = draft.duration.trim();
 	const groupSize = Number.parseInt(draft.groupSize, 10);
 	const priceNum = Number.parseFloat(draft.price);
+	const packageExperience = draft.packageExperience.trim();
 	const itinerary = draft.itinerary
 		.map((d) => ({
 			dayNumber: d.dayNumber.trim(),
 			description: d.description.trim(),
 		}))
 		.filter((d) => d.dayNumber && d.description);
+	const tripHighlights = draft.tripHighlights
+		.map((item) => item.trim())
+		.filter(Boolean);
+	const inclusions = draft.inclusions.map((item) => item.trim()).filter(Boolean);
 
 	if (!title) return "Title is required.";
 	if (!location) return "Location is required.";
@@ -62,6 +77,13 @@ function validateDraft(draft) {
 	if (itinerary.length === 0) {
 		return "Add at least one itinerary day with a description.";
 	}
+	if (tripHighlights.length === 0) {
+		return "Add at least one trip highlight.";
+	}
+	if (inclusions.length === 0) {
+		return "Add at least one inclusion.";
+	}
+	if (!packageExperience) return "Package experience is required.";
 	return null;
 }
 
@@ -160,6 +182,12 @@ export function usePackagesAdmin() {
 				description: d.description.trim(),
 			}))
 			.filter((d) => d.dayNumber && d.description);
+		const tripHighlights = draft.tripHighlights
+			.map((item) => item.trim())
+			.filter(Boolean);
+		const inclusions = draft.inclusions
+			.map((item) => item.trim())
+			.filter(Boolean);
 
 		const fd = new FormData();
 		fd.append("title", draft.title.trim());
@@ -167,8 +195,10 @@ export function usePackagesAdmin() {
 		fd.append("duration", draft.duration.trim());
 		fd.append("groupSize", String(Number.parseInt(draft.groupSize, 10)));
 		fd.append("price", String(Number.parseFloat(draft.price)));
-		fd.append("exploreLink", draft.exploreLink.trim());
 		fd.append("itinerary", JSON.stringify(itinerary));
+		fd.append("tripHighlights", JSON.stringify(tripHighlights));
+		fd.append("inclusions", JSON.stringify(inclusions));
+		fd.append("packageExperience", draft.packageExperience.trim());
 		if (file) fd.append("image", file);
 
 		setFormSubmitting(true);
