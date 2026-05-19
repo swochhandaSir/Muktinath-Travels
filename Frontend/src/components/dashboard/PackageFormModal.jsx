@@ -42,6 +42,68 @@ export default function PackageFormModal({
     });
   };
 
+  const updateListItem = (key, index, value) => {
+    onDraftChange((d) => ({
+      ...d,
+      [key]: d[key].map((item, i) => (i === index ? value : item)),
+    }));
+  };
+
+  const addListItem = (key) => {
+    onDraftChange((d) => ({
+      ...d,
+      [key]: [...d[key], ""],
+    }));
+  };
+
+  const removeListItem = (key, index) => {
+    onDraftChange((d) => {
+      if (d[key].length <= 1) return d;
+      return {
+        ...d,
+        [key]: d[key].filter((_, i) => i !== index),
+      };
+    });
+  };
+
+  const renderListEditor = ({ keyName, title, placeholder }) => (
+    <fieldset className="space-y-3 rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+      <legend className="px-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+        {title}
+      </legend>
+      {draft[keyName].map((item, index) => (
+        <div
+          key={index}
+          className="grid gap-2 rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50 sm:grid-cols-[1fr_auto]"
+        >
+          <input
+            className={inputClass}
+            value={item}
+            onChange={(e) => updateListItem(keyName, index, e.target.value)}
+            placeholder={placeholder}
+            disabled={submitting}
+          />
+          <button
+            type="button"
+            onClick={() => removeListItem(keyName, index)}
+            disabled={submitting || draft[keyName].length <= 1}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => addListItem(keyName)}
+        disabled={submitting}
+        className="rounded-lg border border-dashed border-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:bg-opacity-10 disabled:opacity-50 dark:text-[var(--color-primary)] dark:hover:bg-[var(--color-primary)] dark:hover:bg-opacity-10"
+      >
+        + Add item
+      </button>
+    </fieldset>
+  );
+
   return (
     <Modal
       open={open}
@@ -144,18 +206,20 @@ export default function PackageFormModal({
         </div>
 
         <div>
-          <label htmlFor="pkg-explore-link" className={labelClass}>
-            Explore link{" "}
-            <span className="font-normal text-slate-500">(optional)</span>
+          <label htmlFor="pkg-experience" className={labelClass}>
+            Package experience
           </label>
-          <input
-            id="pkg-explore-link"
-            className={inputClass}
-            value={draft.exploreLink}
+          <textarea
+            id="pkg-experience"
+            className={`${inputClass} min-h-28 resize-y`}
+            value={draft.packageExperience}
             onChange={(e) =>
-              onDraftChange((d) => ({ ...d, exploreLink: e.target.value }))
+              onDraftChange((d) => ({
+                ...d,
+                packageExperience: e.target.value,
+              }))
             }
-            placeholder="/packages/illam-tour or https://..."
+            placeholder="Describe the overall experience for this package"
             disabled={submitting}
           />
         </div>
@@ -258,6 +322,18 @@ export default function PackageFormModal({
             + Add day
           </button>
         </fieldset>
+
+        {renderListEditor({
+          keyName: "tripHighlights",
+          title: "Trip highlights",
+          placeholder: "Scenic ride through eastern hills",
+        })}
+
+        {renderListEditor({
+          keyName: "inclusions",
+          title: "Inclusions",
+          placeholder: "Hotel accommodation",
+        })}
 
         <div className="flex flex-wrap justify-end gap-2 pt-2">
           <button

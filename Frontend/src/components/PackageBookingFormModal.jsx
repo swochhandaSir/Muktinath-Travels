@@ -1,6 +1,8 @@
 ﻿import { useEffect, useState } from "react";
 import Modal from "./dashboard/Modal";
 import { usePackageBooking } from "../context/PackageBookingContext";
+import { apiUrl } from "../lib/api";
+import { parseApiError } from "../lib/parseApiError";
 
 const initialForm = {
   fullName: "",
@@ -67,6 +69,8 @@ export default function PackageBookingFormModal() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const packageLabel = selectedPackage
     ? `${selectedPackage.title} - Rs. ${selectedPackage.price}`
@@ -77,6 +81,7 @@ export default function PackageBookingFormModal() {
     setForm(initialForm);
     setErrors({});
     setSuccessMsg("");
+    setSubmitError("");
   }, [isPackageBookingOpen, selectedPackage]);
 
   const updateField = (key, value) => {
@@ -84,14 +89,45 @@ export default function PackageBookingFormModal() {
     setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = validatePackageBooking(form);
+    if (!selectedPackage?.id && !selectedPackage?._id) {
+      nextErrors.package = "Please select a package.";
+    }
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
-    setSuccessMsg(
-      "Package booking request submitted successfully. We will contact you soon."
-    );
+
+    setSubmitting(true);
+    setSubmitError("");
+    setSuccessMsg("");
+    try {
+      const res = await fetch(apiUrl("/api/package-bookings"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          package: selectedPackage.id || selectedPackage._id,
+          customerName: form.fullName.trim(),
+          customerEmail: form.email.trim(),
+          customerPhone: form.phone.trim(),
+          numberOfPeople: Number.parseInt(form.numberOfPeople, 10),
+          pickupLocation: form.pickupLocation.trim(),
+          returnLocation: form.dropoffLocation.trim(),
+          pickupDate: form.pickupDate,
+          returnDate: form.returnDate,
+          message: form.message.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error(await parseApiError(res));
+      setSuccessMsg(
+        "Package booking request submitted successfully. We will contact you soon."
+      );
+      setForm(initialForm);
+    } catch (err) {
+      setSubmitError(err.message || "Failed to submit package booking.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -109,6 +145,12 @@ export default function PackageBookingFormModal() {
           </p>
         )}
 
+        {submitError && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            {submitError}
+          </p>
+        )}
+
         <div>
           <label className="block text-sm font-medium text-slate-700">
             Selected Package
@@ -119,6 +161,7 @@ export default function PackageBookingFormModal() {
             className="mt-1 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700"
             placeholder="Selected Package"
           />
+          <FieldError message={errors.package} />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -135,6 +178,7 @@ export default function PackageBookingFormModal() {
               placeholder="Enter your name"
               value={form.fullName}
               onChange={(e) => updateField("fullName", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.fullName} />
           </div>
@@ -153,6 +197,7 @@ export default function PackageBookingFormModal() {
               placeholder="Enter your email"
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.email} />
           </div>
@@ -170,6 +215,7 @@ export default function PackageBookingFormModal() {
               placeholder="Enter phone number"
               value={form.phone}
               onChange={(e) => updateField("phone", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.phone} />
           </div>
@@ -188,6 +234,7 @@ export default function PackageBookingFormModal() {
               placeholder="Enter number of people"
               value={form.numberOfPeople}
               onChange={(e) => updateField("numberOfPeople", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.numberOfPeople} />
           </div>
@@ -205,6 +252,7 @@ export default function PackageBookingFormModal() {
               placeholder="Pickup location"
               value={form.pickupLocation}
               onChange={(e) => updateField("pickupLocation", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.pickupLocation} />
           </div>
@@ -222,6 +270,7 @@ export default function PackageBookingFormModal() {
               placeholder="Dropoff location"
               value={form.dropoffLocation}
               onChange={(e) => updateField("dropoffLocation", e.target.value)}
+              disabled={submitting}
             />
             <FieldError message={errors.dropoffLocation} />
           </div>
@@ -240,6 +289,7 @@ export default function PackageBookingFormModal() {
               placeholder="mm/dd/yyyy"
               value={form.pickupDate}
               onChange={(e) => updateField("pickupDate", e.target.value)}
+              disabled={submitting}
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.pickupDate} />
@@ -259,6 +309,7 @@ export default function PackageBookingFormModal() {
               placeholder="mm/dd/yyyy"
               value={form.returnDate}
               onChange={(e) => updateField("returnDate", e.target.value)}
+              disabled={submitting}
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.returnDate} />
@@ -278,6 +329,7 @@ export default function PackageBookingFormModal() {
             placeholder="Message"
             value={form.message}
             onChange={(e) => updateField("message", e.target.value)}
+            disabled={submitting}
           />
         </div>
 
@@ -285,15 +337,17 @@ export default function PackageBookingFormModal() {
           <button
             type="button"
             onClick={closePackageBookingForm}
+            disabled={submitting}
             className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             Cancel
           </button>
           <button
             type="submit"
+            disabled={submitting}
             className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)]"
           >
-            Book Package
+            {submitting ? "Booking..." : "Book Package"}
           </button>
         </div>
       </form>

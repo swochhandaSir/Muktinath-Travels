@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { apiUrl } from "../lib/api";
-import { getPackageDetailsContent } from "../lib/packageDetailsContent";
 import { getHighResImage } from "../lib/image";
 import { usePackageBooking } from "../context/PackageBookingContext";
 
@@ -46,12 +45,9 @@ export default function PackageDetails() {
     };
   }, [packageId]);
 
-  const content = useMemo(
-    () => getPackageDetailsContent(pkg?.title || ""),
-    [pkg?.title],
-  );
-
   const priceDisplay = pkg?.price ? `Rs. ${Number(pkg.price).toFixed(2)}` : "";
+  const tripHighlights = pkg?.tripHighlights || [];
+  const inclusions = pkg?.inclusions || [];
 
   if (loading) {
     return (
@@ -123,24 +119,26 @@ export default function PackageDetails() {
             </SectionCard>
 
             <SectionCard title="✨ Package Experience">
-              <p>{content.experience}</p>
+              <p>{pkg.packageExperience || "Package experience coming soon."}</p>
             </SectionCard>
           </div>
 
           <div className="space-y-6">
             <SectionCard title="Trip Highlights">
               <ul className="space-y-3">
-                {content.highlights.map((item) => (
+                {tripHighlights.map((item) => (
                   <li key={item}>• {item}</li>
                 ))}
+                {tripHighlights.length === 0 && <li>Highlights coming soon.</li>}
               </ul>
             </SectionCard>
 
             <SectionCard title="📦 Inclusions">
               <ul className="space-y-3">
-                {content.inclusions.map((item) => (
+                {inclusions.map((item) => (
                   <li key={item}>• {item}</li>
                 ))}
+                {inclusions.length === 0 && <li>Inclusions coming soon.</li>}
               </ul>
             </SectionCard>
 
