@@ -1,23 +1,23 @@
-import heroImage from "../assets/hero.jpg";
-import VechileCategories from "../components/VechileCategories";
-import ProcessSection from "../components/ProcessSection";
-import { useBooking } from "../context/BookingContext";
+import React from 'react'
+import heroImage from '../assets/hero.jpg'
+import VechileCategories from '../components/VechileCategories'
+import ProcessSection from '../components/ProcessSection'
+import { useBooking } from '../context/BookingContext'
+import Package from '../components/Packages'
 
 const Home = () => {
   const { openBookingForm } = useBooking();
 
   return (
     <>
-      <section
+           <section
         className="relative h-screen bg-cover bg-center"
         style={{
           backgroundImage: `url(${heroImage})`,
         }}
       >
-        {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/50"></div>
 
-        {/* Hero Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
           <h1 className="text-5xl md:text-7xl font-bold max-w-4xl leading-tight">
             Rent Your Dream Bike Today
@@ -35,15 +35,20 @@ const Home = () => {
             Book Now
           </button>
         </div>
+
+        
       </section>
       <section>
-        <VechileCategories />
+        <VechileCategories/>
       </section>
       <section>
-        <ProcessSection />
+        <Package/>
+      </section>
+      <section>
+        <ProcessSection/>
       </section>
     </>
-  );
-};
+  )
+} 
 
-export default Home;
+export default Home

@@ -14,6 +14,7 @@ import DashboardCompanyDetails from "../pages/DashboardCompanyDetails";
 import DashboardPackages from "../pages/DashboardPackages";
 import DashboardBikeBookings from "../pages/DashboardBikeBookings";
 import DashboardPackageBookings from "../pages/DashboardPackageBookings";
+import DashboardContact from "../pages/DashboardContact";
 
 function AppRouter() {
   return (
@@ -26,6 +27,7 @@ function AppRouter() {
           <Route path="packages" element={<DashboardPackages />} />
           <Route path="bikeBookings" element={<DashboardBikeBookings />} />
           <Route path="packageBookings" element={<DashboardPackageBookings />} />
+          <Route path="contact" element={<DashboardContact />} />
         </Route>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
