@@ -1,6 +1,8 @@
 import { useCompanyDetails } from "../hooks/useCompanyDetails";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 import { useState, useEffect } from "react";
+import { apiUrl } from "../lib/api";
+import { parseApiError } from "../lib/parseApiError";
 
 function MapComponent({ location }) {
   const [embedUrl, setEmbedUrl] = useState("");
@@ -68,15 +70,15 @@ export default function Contact() {
     message: "",
   });
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate form
     if (!formData.name || !formData.email || !formData.message) {
       setSubmitStatus({
         type: "error",
@@ -84,13 +86,37 @@ export default function Contact() {
       });
       return;
     }
-    // Reset form and show success message
-    setSubmitStatus({
-      type: "success",
-      message: "Thank you! We'll get back to you soon.",
-    });
-    setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    setTimeout(() => setSubmitStatus(null), 5000);
+
+    setSubmitting(true);
+    setSubmitStatus(null);
+    try {
+      const res = await fetch(apiUrl("/api/contact-messages"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error(await parseApiError(res));
+
+      setSubmitStatus({
+        type: "success",
+        message: "Thank you! We'll get back to you soon.",
+      });
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      setTimeout(() => setSubmitStatus(null), 5000);
+    } catch (err) {
+      setSubmitStatus({
+        type: "error",
+        message: err.message || "Failed to send message.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -289,6 +315,7 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Your Name"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  disabled={submitting}
                   required
                 />
               </div>
@@ -305,6 +332,7 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Your Email"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  disabled={submitting}
                   required
                 />
               </div>
@@ -321,6 +349,7 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Your Phone"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  disabled={submitting}
                 />
               </div>
 
@@ -336,6 +365,7 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Subject"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  disabled={submitting}
                 />
               </div>
 
@@ -351,6 +381,7 @@ export default function Contact() {
                   placeholder="Your Message"
                   rows="5"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none"
+                  disabled={submitting}
                   required
                 ></textarea>
               </div>
@@ -358,9 +389,10 @@ export default function Contact() {
               {/* Submit Button */}
               <button
                 type="submit"
+                disabled={submitting}
                 className="w-full px-6 py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-primary-dark)] transition"
               >
-                Send Message
+                {submitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>

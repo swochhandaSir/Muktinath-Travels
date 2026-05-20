@@ -52,6 +52,11 @@ const navSections = [
         icon: ClipboardList,
         to: "/dashboard/packageBookings",
       },
+      {
+        label: "Contact Message",
+        icon: Mail,
+        to: "/dashboard/contact",
+      },
       // { label: "Blog", icon: BookOpen, href: "#" },
       // { label: "Features", icon: Sparkles, href: "#" },
       // { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
@@ -88,7 +93,6 @@ function AdminLayout() {
     <div
       className={`relative min-h-screen font-sans antialiased ${dark ? "dark" : ""}`}
     >
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <button
           type="button"
@@ -99,7 +103,6 @@ function AdminLayout() {
       )}
 
       <div className="flex min-h-screen">
-        {/* Sidebar */}
         <aside
           className={`
           fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col border-r border-slate-800/80
