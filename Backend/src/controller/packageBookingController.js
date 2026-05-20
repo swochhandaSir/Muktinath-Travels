@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Package from "../models/Package.js";
 import PackageBooking from "../models/PackageBookings.js";
+import { sendBookingConfirmationEmail } from "../utils/email.js";
 
 function toDTO(doc) {
 	if (!doc) return null;
@@ -151,6 +152,25 @@ export const createPackageBooking = async (req, res) => {
 			"package",
 			"title location duration price",
 		);
+
+		try {
+			await sendBookingConfirmationEmail({
+				bookingType: "Package Tour",
+				itemName: populated.package?.title || "Package",
+				customerEmail: populated.customerEmail,
+				customerName: populated.customerName,
+				customerPhone: populated.customerPhone,
+				pickupDate: populated.pickupDate,
+				returnDate: populated.returnDate,
+				pickupLocation: populated.pickupLocation,
+				returnLocation: populated.returnLocation,
+				numberOfPeople: populated.numberOfPeople,
+				message: populated.message,
+			});
+		} catch (emailErr) {
+			console.error("Failed to send booking confirmation email:", emailErr);
+		}
+
 		res.status(201).json(toDTO(populated));
 	} catch (err) {
 		res.status(500).json({ message: err.message });
