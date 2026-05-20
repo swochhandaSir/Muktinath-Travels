@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Bike from "../models/Bike.js";
 import BikeBooking from "../models/BikeBookings.js";
+import { sendBookingConfirmationEmail } from "../utils/email.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 function toDTO(doc) {
 	if (!doc) return null;
@@ -138,6 +141,24 @@ export const createBikeBooking = async (req, res) => {
 
 		const doc = await BikeBooking.create(data);
 		const populated = await doc.populate("bike", "name");
+
+		try {
+			await sendBookingConfirmationEmail({
+				bookingType: "Bike Rental",
+				itemName: populated.bike?.name || "Bike",
+				customerEmail: populated.customerEmail,
+				customerName: populated.customerName,
+				customerPhone: populated.customerPhone,
+				pickupDate: populated.pickupDate,
+				returnDate: populated.returnDate,
+				pickupLocation: populated.pickupLocation,
+				returnLocation: populated.returnLocation,
+				message: populated.message,
+			});
+		} catch (emailErr) {
+			console.error("Failed to send booking confirmation email:", emailErr);
+		}
+
 		res.status(201).json(toDTO(populated));
 	} catch (err) {
 		res.status(500).json({ message: err.message });
