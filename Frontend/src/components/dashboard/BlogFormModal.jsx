@@ -48,6 +48,7 @@ const editorConfig = {
 export default function BlogFormModal({
 	open,
 	mode,
+	
 	blog,
 	draft,
 	onDraftChange,
