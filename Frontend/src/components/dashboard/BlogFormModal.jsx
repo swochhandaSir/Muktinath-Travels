@@ -5,6 +5,7 @@ import { inputClass, labelClass } from "./bikeFormStyles";
 export default function BlogFormModal({
 	open,
 	mode,
+	
 	blog,
 	draft,
 	onDraftChange,

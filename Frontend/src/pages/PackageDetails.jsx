@@ -97,12 +97,7 @@ export default function PackageDetails() {
               <h1 className="mt-3 text-4xl font-black leading-tight text-slate-950 md:text-5xl">
                 {pkg.title}
               </h1>
-              <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                {pkg.title}
-              </h2>
-              <h3 className="mt-2 text-xl font-semibold text-slate-800">
-                {pkg.title}
-              </h3>
+             
               <p className="mt-4 text-2xl font-bold text-[var(--color-primary)]">
                 {priceDisplay}
               </p>
