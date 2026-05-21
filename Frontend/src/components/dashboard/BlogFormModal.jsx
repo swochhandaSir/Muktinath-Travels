@@ -1,49 +1,6 @@
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import {
-	BlockQuote,
-	Bold,
-	ClassicEditor,
-	Essentials,
-	Heading,
-	Italic,
-	Link,
-	List,
-	Paragraph,
-	Underline,
-} from "ckeditor5";
-import "ckeditor5/ckeditor5.css";
+import CkEditorField from "./CkEditorField";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
-
-const editorConfig = {
-	licenseKey: "GPL",
-	plugins: [
-		BlockQuote,
-		Bold,
-		Essentials,
-		Heading,
-		Italic,
-		Link,
-		List,
-		Paragraph,
-		Underline,
-	],
-	toolbar: [
-		"undo",
-		"redo",
-		"|",
-		"heading",
-		"|",
-		"bold",
-		"italic",
-		"underline",
-		"|",
-		"link",
-		"bulletedList",
-		"numberedList",
-		"blockQuote",
-	],
-};
 
 export default function BlogFormModal({
 	open,
@@ -235,19 +192,13 @@ export default function BlogFormModal({
 					<legend className="px-1 text-sm font-medium text-slate-700 dark:text-slate-300">
 						Description
 					</legend>
-					<div
-						className="min-w-[200px] max-w-full overflow-x-hidden rounded-lg border border-slate-200 bg-white p-2 dark:border-slate-600 dark:bg-slate-800 [&_.ck.ck-editor]:min-w-0 [&_.ck.ck-editor__main]:min-w-0 [&_.ck.ck-editor__editable]:min-w-0 [&_.ck.ck-editor__editable]:max-w-full"
-					>
-						<CKEditor 
-							editor={ClassicEditor}
-							config={editorConfig}
-							data={draft.description}
-							disabled={submitting}
-							onChange={(_event, editor) => {
-								onDraftChange((d) => ({ ...d, description: editor.getData() }));
-							}}
-						/>
-					</div>
+					<CkEditorField
+						value={draft.description}
+						disabled={submitting}
+						onChange={(description) =>
+							onDraftChange((d) => ({ ...d, description }))
+						}
+					/>
 				</fieldset>
 
 				<div className="flex flex-wrap justify-end gap-2 pt-2">

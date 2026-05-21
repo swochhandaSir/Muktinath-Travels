@@ -8,7 +8,11 @@ import { useSiteContentAdmin } from "../hooks/useSiteContentAdmin";
 import heroImage from "../assets/hero.jpg";
 
 const fieldRows = [
-	{ key: "title", label: "Hero title", placeholder: "Rent Your Dream Bike Today" },
+	{
+		key: "title",
+		label: "Hero title",
+		placeholder: "Rent Your Dream Bike Today",
+	},
 	{
 		key: "subtitle",
 		label: "Hero subtitle",
@@ -79,16 +83,23 @@ export default function DashboardHome() {
 					<table className="w-full min-w-[980px] border-collapse text-left text-sm">
 						<thead>
 							<tr className="bg-[#e8eef4] text-slate-800 dark:bg-slate-800 dark:text-slate-100">
-								{["SN", "Section", "Title", "Subtitle", "Button", "Image", "Updated At", "Actions"].map(
-									(heading) => (
-										<th
-											key={heading}
-											className="border border-slate-200 px-4 py-3 font-semibold dark:border-slate-700"
-										>
-											{heading}
-										</th>
-									),
-								)}
+								{[
+									"SN",
+									"Section",
+									"Title",
+									"Subtitle",
+									"Button",
+									"Image",
+									"Updated At",
+									"Actions",
+								].map((heading) => (
+									<th
+										key={heading}
+										className="border border-slate-200 px-4 py-3 font-semibold dark:border-slate-700"
+									>
+										{heading}
+									</th>
+								))}
 							</tr>
 						</thead>
 						<tbody>
@@ -152,7 +163,10 @@ export default function DashboardHome() {
 				closeDisabled={siteContent.submitting}
 				panelClassName="max-w-2xl"
 			>
-				<form className="mt-4 space-y-4" onSubmit={onSubmit}>
+				<form
+					className="mt-4 space-y-4"
+					onSubmit={onSubmit}
+				>
 					{siteContent.formError && (
 						<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
 							{siteContent.formError}
@@ -169,7 +183,10 @@ export default function DashboardHome() {
 										: ""
 								}
 							>
-								<label htmlFor={`home-${field.key}`} className={labelClass}>
+								<label
+									htmlFor={`home-${field.key}`}
+									className={labelClass}
+								>
 									{field.label}
 								</label>
 								<input
@@ -185,7 +202,10 @@ export default function DashboardHome() {
 					</div>
 
 					<div>
-						<label htmlFor="home-hero-image" className={labelClass}>
+						<label
+							htmlFor="home-hero-image"
+							className={labelClass}
+						>
 							Background image
 						</label>
 						<input
@@ -196,11 +216,10 @@ export default function DashboardHome() {
 							onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
 							disabled={siteContent.submitting}
 						/>
-						<div className="mt-3">
-							<p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
-								Current image
-							</p>
-							<ImagePreview src={currentHeroImage} alt="Current home hero" />
+
+						<div className="text-sm text-slate-600 dark:text-slate-300">
+							<p>hero image:</p>
+							<p>{siteContent.draft.homeHero.imageUrl}</p>
 						</div>
 					</div>
 

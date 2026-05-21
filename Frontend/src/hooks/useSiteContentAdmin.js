@@ -3,13 +3,45 @@ import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
 import { mergeSiteContent } from "../lib/siteContentDefaults";
 
+function htmlToText(value) {
+	return String(value || "")
+		.replace(/<[^>]*>/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+function featuresToEditorHtml(features) {
+	if (!Array.isArray(features) || features.length === 0) return "";
+	return `<ul>${features.map((item) => `<li>${item}</li>`).join("")}</ul>`;
+}
+
+function featuresEditorHtmlToArray(value) {
+	const html = String(value || "").trim();
+	if (!html) return [];
+
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(html, "text/html");
+	const itemNodes = doc.body.querySelectorAll("li");
+	const nodes = itemNodes.length ? itemNodes : doc.body.querySelectorAll("p");
+	const items = Array.from(nodes)
+		.map((node) => node.innerHTML.trim())
+		.filter((item) => htmlToText(item));
+
+	if (items.length) return items;
+
+	return html
+		.split(/\r?\n/)
+		.map((item) => item.trim())
+		.filter(Boolean);
+}
+
 function toDraft(content) {
 	const merged = mergeSiteContent(content);
 	return {
 		homeHero: { ...merged.homeHero },
 		about: {
 			...merged.about,
-			featuresText: merged.about.features.join("\n"),
+			featuresText: featuresToEditorHtml(merged.about.features),
 		},
 	};
 }
@@ -19,10 +51,7 @@ function draftToPayload(draft) {
 		homeHero: { ...draft.homeHero },
 		about: {
 			...draft.about,
-			features: draft.about.featuresText
-				.split(/\r?\n/)
-				.map((item) => item.trim())
-				.filter(Boolean),
+			features: featuresEditorHtmlToArray(draft.about.featuresText),
 		},
 	};
 }
