@@ -1,7 +1,49 @@
-import { CKEditor } from "@ckeditor/ckeditor5-react";	
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import {
+	BlockQuote,
+	Bold,
+	ClassicEditor,
+	Essentials,
+	Heading,
+	Italic,
+	Link,
+	List,
+	Paragraph,
+	Underline,
+} from "ckeditor5";
+import "ckeditor5/ckeditor5.css";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
+
+const editorConfig = {
+	licenseKey: "GPL",
+	plugins: [
+		BlockQuote,
+		Bold,
+		Essentials,
+		Heading,
+		Italic,
+		Link,
+		List,
+		Paragraph,
+		Underline,
+	],
+	toolbar: [
+		"undo",
+		"redo",
+		"|",
+		"heading",
+		"|",
+		"bold",
+		"italic",
+		"underline",
+		"|",
+		"link",
+		"bulletedList",
+		"numberedList",
+		"blockQuote",
+	],
+};
 
 export default function BlogFormModal({
 	open,
@@ -198,6 +240,7 @@ export default function BlogFormModal({
 					>
 						<CKEditor 
 							editor={ClassicEditor}
+							config={editorConfig}
 							data={draft.description}
 							disabled={submitting}
 							onChange={(_event, editor) => {

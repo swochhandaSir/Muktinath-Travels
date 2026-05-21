@@ -32,7 +32,7 @@ const VehicleCard = ({ vehicle, onBookNow }) => {
         <img
           src={getHighResImage(vehicle.image, 800) || "https://via.placeholder.com/800x533?text=No+Image"}
           alt={vehicle.name}
-          className="h-44 w-full object-cover"
+          className="h-80 w-full object-cover"
         />
 
         <div className="px-4 py-5 text-center">
