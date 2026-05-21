@@ -1,4 +1,4 @@
-import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";	
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
@@ -6,6 +6,7 @@ import { inputClass, labelClass } from "./bikeFormStyles";
 export default function BlogFormModal({
 	open,
 	mode,
+	
 	blog,
 	draft,
 	onDraftChange,
