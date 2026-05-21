@@ -57,7 +57,7 @@ const navSections = [
         icon: Mail,
         to: "/dashboard/contact",
       },
-      // { label: "Blog", icon: BookOpen, href: "#" },
+      { label: "Blog Posts", icon: BookOpen, to: "/dashboard/blogs" },
       // { label: "Features", icon: Sparkles, href: "#" },
       // { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
       // { label: "Counters", icon: Hash, href: "#" },
@@ -213,7 +213,7 @@ function AdminLayout() {
             </div>
           </header>
 
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
             <Outlet />
           </main>
 
