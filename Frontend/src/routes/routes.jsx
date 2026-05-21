@@ -16,13 +16,17 @@ import DashboardBikeBookings from "../pages/DashboardBikeBookings";
 import DashboardPackageBookings from "../pages/DashboardPackageBookings";
 import DashboardContact from "../pages/DashboardContact";
 import DashboardBlogs from "../pages/DashboardBlogs";
+import DashboardHome from "../pages/DashboardHome";
+import DashboardAbout from "../pages/DashboardAbout";
 
 function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/dashboard" element={<AdminLayout />}>
-          <Route index element={<Navigate to="bikes" replace />} />
+          <Route index element={<Navigate to="home" replace />} />
+          <Route path="home" element={<DashboardHome />} />
+          <Route path="about" element={<DashboardAbout />} />
           <Route path="bikes" element={<DashboardBikes />} />
           <Route path="companyDetails" element={<DashboardCompanyDetails />} />
           <Route path="packages" element={<DashboardPackages />} />
