@@ -7,6 +7,7 @@ import companyDetailsRoutes from "./companyDetailsRoutes.js";
 import contactMessagesRoutes from "./contactMessagesRoutes.js";
 import packageBookingsRoutes from "./packageBookingsRoutes.js";
 import packagesRoutes from "./packagesRoutes.js";
+import siteContentRoutes from "./siteContentRoutes.js";
 
 const routes = express.Router();
 
@@ -17,5 +18,6 @@ routes.use("/company-details", companyDetailsRoutes);
 routes.use("/contact-messages", contactMessagesRoutes);
 routes.use("/package-bookings", packageBookingsRoutes);
 routes.use("/packages", packagesRoutes);
+routes.use("/site-content", siteContentRoutes);
 
 export default routes;
