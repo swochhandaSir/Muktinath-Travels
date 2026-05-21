@@ -2,6 +2,17 @@ import { CheckCircle, Eye, Target } from "lucide-react";
 import { useCompanyDetails } from "../hooks/useCompanyDetails";
 import { useSiteContent } from "../hooks/useSiteContent";
 
+function RichText({ html, className = "" }) {
+	if (!html) return null;
+
+	return (
+		<div
+			className={`rich-content ${className}`}
+			dangerouslySetInnerHTML={{ __html: html }}
+		/>
+	);
+}
+
 const About = () => {
 	const { details } = useCompanyDetails();
 	const { content } = useSiteContent();
@@ -18,7 +29,10 @@ const About = () => {
 							{companyName}
 						</h1>
 
-						<p className="mt-6 text-lg leading-10 text-gray-600">{about}</p>
+						<RichText
+							html={about}
+							className="mt-6 text-lg leading-10 text-gray-600 [&_a]:text-[#1d2c57] [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-[#1d2c57] [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+						/>
 
 						<div className="mt-14 grid gap-6 md:grid-cols-2">
 							<div className="rounded-2xl border bg-white p-8 text-center shadow-sm">
@@ -30,9 +44,10 @@ const About = () => {
 									Our Vision
 								</h3>
 
-								<p className="mt-6 text-lg leading-9 text-gray-500">
-									{aboutContent.visionText}
-								</p>
+								<RichText
+									html={aboutContent.visionText}
+									className="mt-6 text-lg leading-9 text-gray-500 [&_a]:text-[#1d2c57] [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+								/>
 							</div>
 
 							<div className="rounded-2xl border bg-white p-8 text-center shadow-sm">
@@ -44,15 +59,17 @@ const About = () => {
 									Our Mission
 								</h3>
 
-								<p className="mt-6 text-lg leading-9 text-gray-500">
-									{aboutContent.missionText}
-								</p>
+								<RichText
+									html={aboutContent.missionText}
+									className="mt-6 text-lg leading-9 text-gray-500 [&_a]:text-[#1d2c57] [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+								/>
 							</div>
 						</div>
 
-						<p className="mt-12 text-xl leading-10 text-gray-600">
-							{aboutContent.closingText}
-						</p>
+						<RichText
+							html={aboutContent.closingText}
+							className="mt-12 text-xl leading-10 text-gray-600 [&_a]:text-[#1d2c57] [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-[#1d2c57] [&_blockquote]:pl-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
+						/>
 					</div>
 
 					<div className="mt-10 flex flex-col gap-8 md:flex-row">
@@ -71,7 +88,10 @@ const About = () => {
 									className="flex items-center gap-3 text-xl text-gray-600"
 								>
 									<CheckCircle className="h-6 w-6 text-[#1d2c57]" />
-									<span>{item}</span>
+									<RichText
+										html={item}
+										className="[&_a]:text-[#1d2c57] [&_a]:underline"
+									/>
 								</div>
 							))}
 						</div>

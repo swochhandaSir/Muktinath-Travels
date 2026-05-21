@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CkEditorField from "../components/dashboard/CkEditorField";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ListErrorBanner from "../components/dashboard/ListErrorBanner";
 import Modal from "../components/dashboard/Modal";
@@ -7,7 +8,11 @@ import { inputClass, labelClass } from "../components/dashboard/bikeFormStyles";
 import { useSiteContentAdmin } from "../hooks/useSiteContentAdmin";
 
 const textFields = [
-	{ key: "heading", label: "Heading", placeholder: "Third Generation Rider Pvt. Ltd." },
+	{
+		key: "heading",
+		label: "Heading",
+		placeholder: "Third Generation Rider Pvt. Ltd.",
+	},
 	{ key: "experienceYears", label: "Experience value", placeholder: "5+" },
 	{
 		key: "experienceLabel",
@@ -17,9 +22,17 @@ const textFields = [
 ];
 
 const textAreas = [
-	{ key: "description", label: "Description", placeholder: "About page intro text" },
+	{
+		key: "description",
+		label: "Description",
+		placeholder: "About page intro text",
+	},
 	{ key: "visionText", label: "Vision text", placeholder: "Vision description" },
-	{ key: "missionText", label: "Mission text", placeholder: "Mission description" },
+	{
+		key: "missionText",
+		label: "Mission text",
+		placeholder: "Mission description",
+	},
 	{
 		key: "closingText",
 		label: "Closing text",
@@ -34,7 +47,14 @@ const textAreas = [
 
 function getListLabel(items) {
 	if (!Array.isArray(items) || items.length === 0) return "-";
-	return items.join(", ");
+	return items.map(getPlainText).join(", ");
+}
+
+function getPlainText(html) {
+	return String(html || "")
+		.replace(/<[^>]*>/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
 }
 
 function ImagePreview({ src, alt }) {
@@ -142,13 +162,19 @@ export default function DashboardAbout() {
 										<p className="line-clamp-2">{about.heading || "-"}</p>
 									</td>
 									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-3">{about.description || "-"}</p>
+										<p className="line-clamp-3">
+											{getPlainText(about.description) || "-"}
+										</p>
 									</td>
 									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">{about.visionText}</p>
+										<p className="line-clamp-2">
+											{getPlainText(about.visionText)}
+										</p>
 									</td>
 									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">{about.missionText}</p>
+										<p className="line-clamp-2">
+											{getPlainText(about.missionText)}
+										</p>
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
 										{about.experienceYears} {about.experienceLabel}
@@ -157,10 +183,16 @@ export default function DashboardAbout() {
 										<p className="line-clamp-3">{getListLabel(about.features)}</p>
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<ImagePreview src={about.primaryImageUrl} alt="About primary" />
+										<ImagePreview
+											src={about.primaryImageUrl}
+											alt="About primary"
+										/>
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<ImagePreview src={about.secondaryImageUrl} alt="About secondary" />
+										<ImagePreview
+											src={about.secondaryImageUrl}
+											alt="About secondary"
+										/>
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
 										{formatDateTime(siteContent.content.updatedAt)}
@@ -189,7 +221,10 @@ export default function DashboardAbout() {
 				closeDisabled={siteContent.submitting}
 				panelClassName="max-w-3xl"
 			>
-				<form className="mt-4 max-h-[75vh] space-y-4 overflow-y-auto pr-1" onSubmit={onSubmit}>
+				<form
+					className="mt-4 max-h-[75vh] space-y-4 overflow-y-auto pr-1"
+					onSubmit={onSubmit}
+				>
 					{siteContent.formError && (
 						<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
 							{siteContent.formError}
@@ -202,7 +237,10 @@ export default function DashboardAbout() {
 								key={field.key}
 								className={field.key === "heading" ? "sm:col-span-2" : ""}
 							>
-								<label htmlFor={`about-${field.key}`} className={labelClass}>
+								<label
+									htmlFor={`about-${field.key}`}
+									className={labelClass}
+								>
 									{field.label}
 								</label>
 								<input
@@ -219,7 +257,10 @@ export default function DashboardAbout() {
 
 					<div className="grid gap-4 sm:grid-cols-2">
 						<div>
-							<label htmlFor="about-primary-image" className={labelClass}>
+							<label
+								htmlFor="about-primary-image"
+								className={labelClass}
+							>
 								Primary image
 							</label>
 							<input
@@ -230,19 +271,17 @@ export default function DashboardAbout() {
 								onChange={(e) => setPrimaryImageFile(e.target.files?.[0] || null)}
 								disabled={siteContent.submitting}
 							/>
-							<div className="mt-3">
-								<p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
-									Current image
-								</p>
-								<ImagePreview
-									src={siteContent.draft.about.primaryImageUrl}
-									alt="Current about primary"
-								/>
+							<div className="text-sm text-slate-600 dark:text-slate-300">
+								<p>current image:</p>
+								<p>{siteContent.draft.about.primaryImageUrl}</p>
 							</div>
 						</div>
 
 						<div>
-							<label htmlFor="about-secondary-image" className={labelClass}>
+							<label
+								htmlFor="about-secondary-image"
+								className={labelClass}
+							>
 								Secondary image
 							</label>
 							<input
@@ -253,14 +292,9 @@ export default function DashboardAbout() {
 								onChange={(e) => setSecondaryImageFile(e.target.files?.[0] || null)}
 								disabled={siteContent.submitting}
 							/>
-							<div className="mt-3">
-								<p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
-									Current image
-								</p>
-								<ImagePreview
-									src={siteContent.draft.about.secondaryImageUrl}
-									alt="Current about secondary"
-								/>
+							<div className="text-sm text-slate-600 dark:text-slate-300">
+								<p>secondary image:</p>
+								<p>{siteContent.draft.about.secondaryImageUrl}</p>
 							</div>
 						</div>
 					</div>
@@ -268,16 +302,17 @@ export default function DashboardAbout() {
 					<div className="grid gap-4">
 						{textAreas.map((field) => (
 							<div key={field.key}>
-								<label htmlFor={`about-${field.key}`} className={labelClass}>
+								<label
+									htmlFor={`about-${field.key}`}
+									className={labelClass}
+								>
 									{field.label}
 								</label>
-								<textarea
-									id={`about-${field.key}`}
-									className={`${inputClass} min-h-28 resize-y`}
+								<CkEditorField
 									value={siteContent.draft.about[field.key]}
-									onChange={(e) => updateAbout(field.key, e.target.value)}
-									placeholder={field.placeholder}
 									disabled={siteContent.submitting}
+									minHeight={field.key === "featuresText" ? 220 : 260}
+									onChange={(value) => updateAbout(field.key, value)}
 								/>
 							</div>
 						))}
