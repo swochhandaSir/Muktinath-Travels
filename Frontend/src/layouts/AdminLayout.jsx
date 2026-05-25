@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router";
+import { clearDashboardAuthenticated } from "../lib/dashboardAuth";
 import {
   Bike,
   Building2,
@@ -38,11 +39,11 @@ const navSections = [
       { label: "Home Page", icon: ImageIcon, to: "/dashboard/home" },
       { label: "About Page", icon: Info, to: "/dashboard/about" },
       { label: "Bikes", icon: Bike, to: "/dashboard/bikes" },
-			{
-				label: "Bike Bookings",
-				icon: CalendarDays,
-				to: "/dashboard/bikeBookings",
-			},
+      {
+        label: "Bike Bookings",
+        icon: CalendarDays,
+        to: "/dashboard/bikeBookings",
+      },
       {
         label: "Company Details",
         icon: Building2,
@@ -92,9 +93,7 @@ function AdminLayout() {
   }, []);
 
   return (
-    <div
-      className={`relative min-h-screen font-sans antialiased ${dark ? "dark" : ""}`}
-    >
+    <div className={`relative min-h-screen antialiased ${dark ? "dark" : ""}`}>
       {sidebarOpen && (
         <button
           type="button"
@@ -115,10 +114,10 @@ function AdminLayout() {
         `}
         >
           <div className="flex h-16 shrink-0 items-center gap-2 border-b border-white/10 px-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-[var(--color-primary)]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-(--color-primary)">
               <LayoutDashboard className="h-5 w-5" />
             </div>
-            <span className="text-lg font-semibold tracking-tight text-[var(--color-primary)]">
+            <span className="text-lg font-semibold tracking-tight text-(--color-primary)">
               {brandName}
             </span>
           </div>
@@ -157,7 +156,8 @@ function AdminLayout() {
 
           <div className="border-t border-white/10 p-2">
             <Link
-              to="/"
+              to="/dashboard/login"
+              onClick={clearDashboardAuthenticated}
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
             >
               <LogOut className="h-4 w-4" />

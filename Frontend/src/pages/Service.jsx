@@ -117,16 +117,14 @@ const Service = () => {
 
   return (
     <div className="bg-white">
-      
-
       {/* Hero Section */}
-      <section className="bg-gray-100 py-20">
+      <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-black text-5xl font-bold mb-3 tracking-wider">
+          <h2 className="text-4xl font-bold tracking-wide text-slate-950 md:text-5xl">
             Our Services
-          </p>
+          </h2>
 
-          <p className="max-w-3xl mx-auto text-gray-600 text-lg leading-relaxed">
+          <p className="max-w-3xl mx-auto text-gray-600 text-lg leading-relaxed mt-6">
             Explore our comprehensive range of car rental services designed to
             meet your needs. From short-term rentals to long-term leases, we
             offer flexible options for individuals and businesses alike. Our

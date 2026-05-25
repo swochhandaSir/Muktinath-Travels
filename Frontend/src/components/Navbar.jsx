@@ -24,7 +24,7 @@ const Navbar = () => {
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
-    <nav className="w-full border-t border-slate-200 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <nav className="w-full border-b border-slate-200 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex min-w-0 items-center gap-3">
