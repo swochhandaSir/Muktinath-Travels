@@ -1,7 +1,30 @@
-import { Edit, ExternalLink, QrCode, Trash2 } from "lucide-react";
+import { Download, Edit, ExternalLink, QrCode, Trash2 } from "lucide-react";
 import DashboardButton from "./DashboardButton";
 
 export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
+  const downloadQrCode = async (bike) => {
+    if (!bike.qrCode) return;
+
+    try {
+      const res = await fetch(bike.qrCode);
+      if (!res.ok) throw new Error("Failed to download QR code.");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${bike.name || "bike"}-qr-code.png`
+        .replace(/[\\/:*?"<>|]+/g, "-")
+        .replace(/\s+/g, "-")
+        .toLowerCase();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(bike.qrCode, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="overflow-x-auto">
@@ -86,19 +109,30 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
                   </td>
                   <td className="px-4 py-2">
                     {row.qrCode ? (
-                      <a
-                        href={`/bike-details/${row.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 hover:text-[var(--color-primary)] dark:text-slate-200"
-                      >
-                        <img
-                          src={row.qrCode}
-                          alt={`QR code for ${row.name}`}
-                          className="h-16 w-16 rounded border border-slate-200 bg-white object-contain p-1 dark:border-slate-700"
-                        />
-                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`/bike-details/${row.id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 text-xs font-medium text-slate-700 hover:text-[var(--color-primary)] dark:text-slate-200"
+                        >
+                          <img
+                            src={row.qrCode}
+                            alt={`QR code for ${row.name}`}
+                            className="h-16 w-16 rounded border border-slate-200 bg-white object-contain p-1 dark:border-slate-700"
+                          />
+                          {/* <ExternalLink className="h-4 w-4" aria-hidden="true" /> */}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => downloadQrCode(row)}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-[var(--color-primary)] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                          aria-label={`Download QR code for ${row.name}`}
+                          title="Download QR code"
+                        >
+                          <Download className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                      </div>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-slate-400">
                         <QrCode className="h-4 w-4" aria-hidden="true" />

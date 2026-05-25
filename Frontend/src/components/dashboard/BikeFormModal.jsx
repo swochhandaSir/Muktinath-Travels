@@ -1,4 +1,5 @@
-import { Save, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Save, X } from "lucide-react";
 import DashboardButton from "./DashboardButton";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
@@ -13,12 +14,18 @@ export default function BikeFormModal({
   submitting,
   imageInputRef,
   licenseImageInputRef,
+  blueBookImagesInputRefs,
   onClose,
   onSubmit,
 }) {
   const isAdd = mode === "add";
+  const [blueBookImageFieldCount, setBlueBookImageFieldCount] = useState(1);
   const updateDraft = (field, value) =>
     onDraftChange((d) => ({ ...d, [field]: value }));
+
+  useEffect(() => {
+    if (open) setBlueBookImageFieldCount(1);
+  }, [open]);
 
   return (
     <Modal
@@ -254,6 +261,48 @@ export default function BikeFormModal({
               >
                 view license image
               </a>
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass}>
+            Bluebook images{" "}
+            {!isAdd && (
+              <span className="font-normal text-slate-500">
+                (optional - selected images will be added)
+              </span>
+            )}
+          </label>
+          <div className="space-y-2">
+            {Array.from({ length: blueBookImageFieldCount }).map((_, index) => (
+              <input
+                key={index}
+                id={`bike-blue-book-images-${index}`}
+                ref={(node) => {
+                  blueBookImagesInputRefs.current[index] = node;
+                }}
+                type="file"
+                accept="image/*"
+                multiple
+                className={inputClass}
+                disabled={submitting}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setBlueBookImageFieldCount((count) => count + 1)}
+            disabled={submitting}
+            className="mt-2 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add bluebook image
+          </button>
+          {!isAdd && bike?.blueBookImages?.length > 0 && (
+            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+              Current: {bike.blueBookImages.length} image
+              {bike.blueBookImages.length === 1 ? "" : "s"}
             </p>
           )}
         </div>

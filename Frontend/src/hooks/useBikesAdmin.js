@@ -46,6 +46,7 @@ export function useBikesAdmin() {
 	const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 	const imageInputRef = useRef(null);
 	const licenseImageInputRef = useRef(null);
+	const blueBookImagesInputRefs = useRef([]);
 
 	const loadBikes = useCallback(async () => {
 		setListError("");
@@ -90,6 +91,9 @@ export function useBikesAdmin() {
 	const resetImageInput = () => {
 		if (imageInputRef.current) imageInputRef.current.value = "";
 		if (licenseImageInputRef.current) licenseImageInputRef.current.value = "";
+		for (const input of blueBookImagesInputRefs.current) {
+			if (input) input.value = "";
+		}
 	};
 
 	const openAdd = () => {
@@ -119,6 +123,9 @@ export function useBikesAdmin() {
 		const engineCapacityNum = Number(draft.engineCapacity || 0);
 		const file = imageInputRef.current?.files?.[0];
 		const licenseFile = licenseImageInputRef.current?.files?.[0];
+		const blueBookFiles = blueBookImagesInputRefs.current.flatMap((input) =>
+			Array.from(input?.files || []),
+		);
 
 		if (!name) {
 			setFormError("Name is required.");
@@ -155,6 +162,9 @@ export function useBikesAdmin() {
 		fd.append("blueBookNumber", draft.blueBookNumber.trim());
 		if (file) fd.append("image", file);
 		if (licenseFile) fd.append("licenseImage", licenseFile);
+		for (const blueBookFile of blueBookFiles) {
+			fd.append("blueBookImages", blueBookFile);
+		}
 
 		setFormSubmitting(true);
 		setFormError("");
@@ -207,6 +217,7 @@ export function useBikesAdmin() {
 		formSubmitting,
 		imageInputRef,
 		licenseImageInputRef,
+		blueBookImagesInputRefs,
 		deleteTarget,
 		setDeleteTarget,
 		deleteSubmitting,

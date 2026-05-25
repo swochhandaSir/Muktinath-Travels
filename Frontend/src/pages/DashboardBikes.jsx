@@ -38,6 +38,7 @@ const DashboardBikes = () => {
 				submitting={bikesAdmin.formSubmitting}
 				imageInputRef={bikesAdmin.imageInputRef}
 				licenseImageInputRef={bikesAdmin.licenseImageInputRef}
+				blueBookImagesInputRefs={bikesAdmin.blueBookImagesInputRefs}
 				onClose={bikesAdmin.closeForm}
 				onSubmit={bikesAdmin.submitForm}
 			/>

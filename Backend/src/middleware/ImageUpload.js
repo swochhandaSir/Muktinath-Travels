@@ -27,6 +27,7 @@ const uploadImageFields = multer({
 }).fields([
     { name: "image", maxCount: 1 },
     { name: "licenseImage", maxCount: 1 },
+    { name: "blueBookImages" },
 ]);
 
 export const withUpload = (req, res, next) => {
