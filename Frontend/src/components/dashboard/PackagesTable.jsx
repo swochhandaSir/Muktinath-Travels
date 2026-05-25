@@ -1,3 +1,6 @@
+import { Edit, Trash2 } from "lucide-react";
+import DashboardButton from "./DashboardButton";
+
 export default function PackagesTable({ packages, loading, onEdit, onDelete }) {
   return (
     <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -96,20 +99,22 @@ export default function PackagesTable({ packages, loading, onEdit, onDelete }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
+                      <DashboardButton
                         onClick={() => onEdit(row)}
-                        className="rounded-md bg-[var(--color-primary)] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[var(--color-primary-dark)]"
+                        variant="primary"
+                        size="sm"
+                        icon={Edit}
                       >
                         Edit
-                      </button>
-                      <button
-                        type="button"
+                      </DashboardButton>
+                      <DashboardButton
                         onClick={() => onDelete(row)}
-                        className="rounded-md bg-red-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-600"
+                        variant="danger"
+                        size="sm"
+                        icon={Trash2}
                       >
                         Delete
-                      </button>
+                      </DashboardButton>
                     </div>
                   </td>
                 </tr>

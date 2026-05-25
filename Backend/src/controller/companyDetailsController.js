@@ -11,6 +11,7 @@ const textFields = [
 	"facebook",
 	"tiktok",
 	"instagram",
+	"whatsapp",
 ];
 
 function toDTO(doc) {
@@ -22,6 +23,7 @@ function toDTO(doc) {
 		logo: o.logo || "",
 		contactEmail: o.contactEmail || "",
 		contactPhone: o.contactPhone || "",
+		whatsapp: o.whatsapp || "",
 		location: o.location || "",
 		about: o.about || "",
 		facebook: o.facebook || "",

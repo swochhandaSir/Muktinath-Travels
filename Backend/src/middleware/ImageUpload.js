@@ -14,9 +14,25 @@ export const uploadImage = multer({
     },
 }).single("image");
 
+const uploadImageFields = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter(_req, file, cb) {
+        if (!file.mimetype.startsWith("image/")) {
+            cb(new Error("Only image files are allowed."));
+            return;
+        }
+        cb(null, true);
+    },
+}).fields([
+    { name: "image", maxCount: 1 },
+    { name: "licenseImage", maxCount: 1 },
+]);
+
 export const withUpload = (req, res, next) => {
-    uploadImage(req, res, (err) => {
+    uploadImageFields(req, res, (err) => {
         if (!err) {
+            req.file = req.files?.image?.[0];
             next();
             return;
         }

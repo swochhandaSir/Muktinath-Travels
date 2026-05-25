@@ -3,13 +3,34 @@ import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
 
 export function emptyBikeDraft() {
-	return { name: "", price: "" };
+	return {
+		name: "",
+		price: "",
+		model: "",
+		color: "",
+		plateNumber: "",
+		chassisNumber: "",
+		engineNumber: "",
+		mileage: "",
+		available: true,
+		engineCapacity: "",
+		blueBookNumber: "",
+	};
 }
 
 export function bikeToDraft(bike) {
 	return {
 		name: bike.name,
 		price: String(bike.price),
+		model: bike.model || "",
+		color: bike.color || "",
+		plateNumber: bike.plateNumber || "",
+		chassisNumber: bike.chassisNumber || "",
+		engineNumber: bike.engineNumber || "",
+		mileage: String(bike.mileage ?? ""),
+		available: bike.available ?? true,
+		engineCapacity: String(bike.engineCapacity ?? ""),
+		blueBookNumber: bike.blueBookNumber || "",
 	};
 }
 
@@ -24,6 +45,7 @@ export function useBikesAdmin() {
 	const [deleteTarget, setDeleteTarget] = useState(null);
 	const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 	const imageInputRef = useRef(null);
+	const licenseImageInputRef = useRef(null);
 
 	const loadBikes = useCallback(async () => {
 		setListError("");
@@ -67,6 +89,7 @@ export function useBikesAdmin() {
 
 	const resetImageInput = () => {
 		if (imageInputRef.current) imageInputRef.current.value = "";
+		if (licenseImageInputRef.current) licenseImageInputRef.current.value = "";
 	};
 
 	const openAdd = () => {
@@ -92,7 +115,10 @@ export function useBikesAdmin() {
 		e.preventDefault();
 		const name = draft.name.trim();
 		const priceNum = Number.parseFloat(draft.price);
+		const mileageNum = Number(draft.mileage || 0);
+		const engineCapacityNum = Number(draft.engineCapacity || 0);
 		const file = imageInputRef.current?.files?.[0];
+		const licenseFile = licenseImageInputRef.current?.files?.[0];
 
 		if (!name) {
 			setFormError("Name is required.");
@@ -100,6 +126,14 @@ export function useBikesAdmin() {
 		}
 		if (!Number.isFinite(priceNum) || priceNum < 0) {
 			setFormError("Enter a valid price per day.");
+			return;
+		}
+		if (!Number.isFinite(mileageNum) || mileageNum < 0) {
+			setFormError("Enter a valid mileage.");
+			return;
+		}
+		if (!Number.isFinite(engineCapacityNum) || engineCapacityNum < 0) {
+			setFormError("Enter a valid engine capacity.");
 			return;
 		}
 		if (formModal.mode === "add" && !file) {
@@ -110,7 +144,17 @@ export function useBikesAdmin() {
 		const fd = new FormData();
 		fd.append("name", name);
 		fd.append("price", String(priceNum));
+		fd.append("model", draft.model.trim());
+		fd.append("color", draft.color.trim());
+		fd.append("plateNumber", draft.plateNumber.trim());
+		fd.append("chassisNumber", draft.chassisNumber.trim());
+		fd.append("engineNumber", draft.engineNumber.trim());
+		fd.append("mileage", String(mileageNum));
+		fd.append("available", String(Boolean(draft.available)));
+		fd.append("engineCapacity", String(engineCapacityNum));
+		fd.append("blueBookNumber", draft.blueBookNumber.trim());
 		if (file) fd.append("image", file);
+		if (licenseFile) fd.append("licenseImage", licenseFile);
 
 		setFormSubmitting(true);
 		setFormError("");
@@ -162,6 +206,7 @@ export function useBikesAdmin() {
 		formError,
 		formSubmitting,
 		imageInputRef,
+		licenseImageInputRef,
 		deleteTarget,
 		setDeleteTarget,
 		deleteSubmitting,

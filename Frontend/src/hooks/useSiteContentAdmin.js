@@ -84,7 +84,6 @@ export function useSiteContentAdmin() {
 	}, []);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		loadSiteContent();
 	}, [loadSiteContent]);
 

@@ -1,3 +1,5 @@
+import { Save, X } from "lucide-react";
+import DashboardButton from "./DashboardButton";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
 
@@ -5,6 +7,7 @@ const fieldRows = [
   { key: "name", label: "Company name", placeholder: "Vehicle Rental" },
   { key: "contactEmail", label: "Email", placeholder: "info@example.com" },
   { key: "contactPhone", label: "Phone", placeholder: "+977 1 1234567" },
+  { key: "whatsapp", label: "WhatsApp", placeholder: "+977 1 1234567" },
   { key: "location", label: "Location", placeholder: "Kathmandu, Nepal" },
   {
     key: "facebook",
@@ -125,21 +128,23 @@ export default function CompanyDetailsFormModal({
         </div>
 
         <div className="flex flex-wrap justify-end gap-2 pt-2">
-          <button
+          <DashboardButton
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            variant="secondary"
+            icon={X}
           >
             Cancel
-          </button>
-          <button
+          </DashboardButton>
+          <DashboardButton
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
+            variant="primary"
+            icon={Save}
           >
             {submitting ? "Saving..." : isAdd ? "Add details" : "Save changes"}
-          </button>
+          </DashboardButton>
         </div>
       </form>
     </Modal>

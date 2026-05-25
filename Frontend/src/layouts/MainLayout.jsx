@@ -10,7 +10,7 @@ import { useCompanyDetails } from "../hooks/useCompanyDetails";
 const MainLayout = () => {
   const { details } = useCompanyDetails();
   const phoneNumber = details?.contactPhone || "";
-  const whatsappNumber = phoneNumber.replace(/\D/g, "");
+  const whatsappNumber = (details?.whatsapp || "").replace(/\D/g, "");
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">

@@ -1,3 +1,5 @@
+import { Trash2, X } from "lucide-react";
+import DashboardButton from "./DashboardButton";
 import Modal from "./Modal";
 
 export default function DeleteCompanyDetailsModal({
@@ -24,22 +26,24 @@ export default function DeleteCompanyDetailsModal({
 				from the database. This cannot be undone.
 			</p>
 			<div className="mt-6 flex flex-wrap justify-end gap-2">
-				<button
+				<DashboardButton
 					type="button"
 					onClick={onCancel}
 					disabled={submitting}
-					className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+					variant="secondary"
+					icon={X}
 				>
 					Cancel
-				</button>
-				<button
+				</DashboardButton>
+				<DashboardButton
 					type="button"
 					onClick={onConfirm}
 					disabled={submitting}
-					className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
+					variant="danger"
+					icon={Trash2}
 				>
 					{submitting ? "Deleting..." : "Delete"}
-				</button>
+				</DashboardButton>
 			</div>
 		</Modal>
 	);
