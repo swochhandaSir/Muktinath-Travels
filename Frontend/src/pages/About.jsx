@@ -17,7 +17,7 @@ const About = () => {
 	const { details } = useCompanyDetails();
 	const { content } = useSiteContent();
 	const aboutContent = content.about;
-	const companyName = aboutContent.heading || details?.name || "About Us";
+	const companyName = aboutContent.heading || details?.name || "";
 	const about = aboutContent.description || details?.about || "";
 
 	return (

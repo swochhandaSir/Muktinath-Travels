@@ -26,6 +26,26 @@ const aboutSchema = new mongoose.Schema(
 	{ _id: false },
 );
 
+const processStepSchema = new mongoose.Schema(
+	{
+		number: { type: String, trim: true, default: "" },
+		title: { type: String, trim: true, default: "" },
+		description: { type: String, trim: true, default: "" },
+	},
+	{ _id: false },
+);
+
+const processSchema = new mongoose.Schema(
+	{
+		heading: { type: String, trim: true, default: "" },
+		subheading: { type: String, trim: true, default: "" },
+		description: { type: String, trim: true, default: "" },
+		backgroundImageUrl: { type: String, trim: true, default: "" },
+		steps: { type: [processStepSchema], default: [] },
+	},
+	{ _id: false },
+);
+
 const siteContentSchema = new mongoose.Schema(
 	{
 		key: {
@@ -37,6 +57,7 @@ const siteContentSchema = new mongoose.Schema(
 		},
 		homeHero: { type: homeHeroSchema, default: () => ({}) },
 		about: { type: aboutSchema, default: () => ({}) },
+		process: { type: processSchema, default: () => ({}) },
 	},
 	{ timestamps: true },
 );

@@ -30,6 +30,33 @@ const DEFAULT_SITE_CONTENT = {
 		secondaryImageUrl:
 			"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
 	},
+	process: {
+		heading: "Travel Agency",
+		subheading: "Process",
+		description:
+			"Bike rental made easy! Follow our simple 3-step process to get on the road in no time. Choose your bike, book online, and enjoy your ride!",
+		backgroundImageUrl:
+			"https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1920&q=80",
+		steps: [
+			{
+				number: "01.",
+				title: "Come In Contact",
+				description:
+					"Come in contact with us to get more information about our bike rental services.",
+			},
+			{
+				number: "02.",
+				title: "Choose A Bike",
+				description: "Browse our fleet and select the perfect bike for your needs.",
+			},
+			{
+				number: "03.",
+				title: "Enjoy Riding",
+				description:
+					"Sit back, relax, and enjoy your journey with our reliable and comfortable bikes.",
+			},
+		],
+	},
 };
 
 function cleanText(value) {
@@ -49,6 +76,17 @@ function normalizeFeatures(value) {
 	return [];
 }
 
+function normalizeProcessSteps(value) {
+	if (!Array.isArray(value)) return [];
+	return value
+		.map((step, index) => ({
+			number: cleanText(step?.number) || `${String(index + 1).padStart(2, "0")}.`,
+			title: cleanText(step?.title),
+			description: cleanText(step?.description),
+		}))
+		.filter((step) => step.number || step.title || step.description);
+}
+
 function mergeWithDefaults(doc) {
 	const source = doc?.toObject ? doc.toObject() : doc || {};
 	return {
@@ -64,6 +102,18 @@ function mergeWithDefaults(doc) {
 				? source.about.features
 				: DEFAULT_SITE_CONTENT.about.features,
 		},
+		process: {
+			...DEFAULT_SITE_CONTENT.process,
+			...(source.process || {}),
+			steps: source.process?.steps?.length
+				? source.process.steps.map((step, index) => ({
+						number:
+							step.number || `${String(index + 1).padStart(2, "0")}.`,
+						title: step.title || "",
+						description: step.description || "",
+					}))
+				: DEFAULT_SITE_CONTENT.process.steps,
+		},
 		createdAt: source.createdAt || null,
 		updatedAt: source.updatedAt || null,
 	};
@@ -74,6 +124,7 @@ function buildPayload(body) {
 		typeof body.content === "string" ? JSON.parse(body.content) : body;
 	const homeHero = parsedBody.homeHero || {};
 	const about = parsedBody.about || {};
+	const process = parsedBody.process || {};
 
 	return {
 		homeHero: {
@@ -94,6 +145,13 @@ function buildPayload(body) {
 			primaryImageUrl: cleanText(about.primaryImageUrl),
 			secondaryImageUrl: cleanText(about.secondaryImageUrl),
 		},
+		process: {
+			heading: cleanText(process.heading),
+			subheading: cleanText(process.subheading),
+			description: cleanText(process.description),
+			backgroundImageUrl: cleanText(process.backgroundImageUrl),
+			steps: normalizeProcessSteps(process.steps),
+		},
 	};
 }
 
@@ -101,6 +159,7 @@ async function applyUploadedImages(payload, files) {
 	const homeHeroImage = files?.homeHeroImage?.[0];
 	const aboutPrimaryImage = files?.aboutPrimaryImage?.[0];
 	const aboutSecondaryImage = files?.aboutSecondaryImage?.[0];
+	const processBackgroundImage = files?.processBackgroundImage?.[0];
 
 	if (homeHeroImage?.buffer) {
 		payload.homeHero.imageUrl = await uploadImageBuffer(
@@ -120,6 +179,13 @@ async function applyUploadedImages(payload, files) {
 		payload.about.secondaryImageUrl = await uploadImageBuffer(
 			aboutSecondaryImage.buffer,
 			"vehicle-rental/site-content/about",
+		);
+	}
+
+	if (processBackgroundImage?.buffer) {
+		payload.process.backgroundImageUrl = await uploadImageBuffer(
+			processBackgroundImage.buffer,
+			"vehicle-rental/site-content/process",
 		);
 	}
 }

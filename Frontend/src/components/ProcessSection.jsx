@@ -1,29 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useSiteContent } from "../hooks/useSiteContent";
 
-const ProcessSection = () => {
-  const processSteps = [
-    {
-      number: "01.",
-      title: "Come In Contact",
-      description:
-        "Come in contact with us to get more information about our car rental services.",
-    },
-    {
-      number: "02.",
-      title: "Choose A Car",
-      description:
-        "Browse our fleet and select the perfect car for your needs.",
-    },
-    {
-      number: "03.",
-      title: "Enjoy Driving",
-      description:
-        "Sit back, relax, and enjoy your journey with our reliable and comfortable vehicles.",
-    },
-  ];
-
-  // Animation for container
+const ProcessSection = ({ data }) => {
+  const { content } = useSiteContent();
+  const process = data || content.process;
+  const processSteps = process.steps.map((step, index) => ({
+    ...step,
+    number: step.number || String(index + 1).padStart(2, "0") + ".",
+  }));
   const containerVariants = {
     hidden: {},
     visible: {
@@ -33,7 +18,6 @@ const ProcessSection = () => {
     },
   };
 
-  // Animation for each card
   const cardVariants = {
     hidden: {
       opacity: 0,
@@ -50,7 +34,10 @@ const ProcessSection = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[url(https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1920&q=80)] bg-cover bg-center py-24 text-white">
+    <section
+      className="relative overflow-hidden bg-cover bg-center py-24 text-white"
+      style={{ backgroundImage: `url(${process.backgroundImageUrl})` }}
+    >
       <div className="absolute inset-0 bg-black/85"></div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
@@ -63,13 +50,14 @@ const ProcessSection = () => {
           className="mx-auto max-w-3xl text-center"
         >
           <h2 className="text-4xl font-bold leading-tight md:text-5xl">
-            Travel Agency
-            <span className="block">Process</span>
+            {process.heading}
+            {process.subheading && (
+              <span className="block">{process.subheading}</span>
+            )}
           </h2>
 
           <p className="mt-6 text-base font-medium leading-relaxed">
-            Car rental made easy! Follow our simple 3-step process to get on the
-            road in no time. Choose your car, book online, and enjoy your ride!
+            {process.description}
           </p>
         </motion.div>
 

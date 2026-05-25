@@ -42,6 +42,8 @@ export function useBikesAdmin() {
 	const [draft, setDraft] = useState(emptyBikeDraft);
 	const [formError, setFormError] = useState("");
 	const [formSubmitting, setFormSubmitting] = useState(false);
+	const [imageDeleteSubmitting, setImageDeleteSubmitting] = useState(null);
+	const [imageDeleteError, setImageDeleteError] = useState("");
 	const [deleteTarget, setDeleteTarget] = useState(null);
 	const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 	const imageInputRef = useRef(null);
@@ -113,6 +115,59 @@ export function useBikesAdmin() {
 	const closeForm = () => {
 		setFormModal(null);
 		setFormError("");
+		setImageDeleteError("");
+	};
+
+	const applyUpdatedBike = async (updatedBike) => {
+		setBikes((items) =>
+			items.map((item) => (item.id === updatedBike.id ? updatedBike : item)),
+		);
+		setFormModal((current) =>
+			current?.bike?.id === updatedBike.id
+				? { ...current, bike: updatedBike }
+				: current,
+		);
+	};
+
+	const deleteLicenseImage = async (targetBike = formModal?.bike) => {
+		const bike = targetBike;
+		if (!bike?.licenseImage) return;
+		if (!window.confirm("Delete this license image?")) return;
+
+		setImageDeleteSubmitting(`${bike.id}-license`);
+		setImageDeleteError("");
+		try {
+			const res = await fetch(apiUrl(`/api/bikes/${bike.id}/license-image`), {
+				method: "DELETE",
+			});
+			if (!res.ok) throw new Error(await parseApiError(res));
+			await applyUpdatedBike(await res.json());
+		} catch (err) {
+			setImageDeleteError(err.message || "Failed to delete license image.");
+		} finally {
+			setImageDeleteSubmitting(null);
+		}
+	};
+
+	const deleteBlueBookImage = async (index, targetBike = formModal?.bike) => {
+		const bike = targetBike;
+		if (!bike?.blueBookImages?.[index]) return;
+		if (!window.confirm("Delete this bluebook image?")) return;
+
+		setImageDeleteSubmitting(`${bike.id}-bluebook-${index}`);
+		setImageDeleteError("");
+		try {
+			const res = await fetch(
+				apiUrl(`/api/bikes/${bike.id}/bluebook-images/${index}`),
+				{ method: "DELETE" },
+			);
+			if (!res.ok) throw new Error(await parseApiError(res));
+			await applyUpdatedBike(await res.json());
+		} catch (err) {
+			setImageDeleteError(err.message || "Failed to delete bluebook image.");
+		} finally {
+			setImageDeleteSubmitting(null);
+		}
 	};
 
 	const submitForm = async (e) => {
@@ -215,6 +270,8 @@ export function useBikesAdmin() {
 		setDraft,
 		formError,
 		formSubmitting,
+		imageDeleteSubmitting,
+		imageDeleteError,
 		imageInputRef,
 		licenseImageInputRef,
 		blueBookImagesInputRefs,
@@ -225,6 +282,8 @@ export function useBikesAdmin() {
 		openEdit,
 		closeForm,
 		submitForm,
+		deleteLicenseImage,
+		deleteBlueBookImage,
 		confirmDelete,
 	};
 }

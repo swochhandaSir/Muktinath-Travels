@@ -51,13 +51,13 @@ function AppRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/bikes" element={<Bikes />} />
-          <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/package" element={<Package />} />
           <Route path="/package/:packageId" element={<PackageDetails />} />
           <Route path="/service" element={<Service />} />
         </Route>
+        <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
       </Routes>
     </BrowserRouter>
   );
