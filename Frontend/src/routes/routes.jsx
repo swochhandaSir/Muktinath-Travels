@@ -10,6 +10,7 @@ import PackageDetails from "../pages/PackageDetails";
 import Service from "../pages/Service";
 import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
+import DashboardAuthGate from "../components/dashboard/DashboardAuthGate";
 import DashboardBikes from "../pages/DashboardBikes";
 import DashboardCompanyDetails from "../pages/DashboardCompanyDetails";
 import DashboardPackages from "../pages/DashboardPackages";
@@ -19,22 +20,32 @@ import DashboardContact from "../pages/DashboardContact";
 import DashboardBlogs from "../pages/DashboardBlogs";
 import DashboardHome from "../pages/DashboardHome";
 import DashboardAbout from "../pages/DashboardAbout";
+import DashboardLogin from "../pages/DashboardLogin";
 
 function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/dashboard" element={<AdminLayout />}>
-          <Route index element={<Navigate to="home" replace />} />
-          <Route path="home" element={<DashboardHome />} />
-          <Route path="about" element={<DashboardAbout />} />
-          <Route path="bikes" element={<DashboardBikes />} />
-          <Route path="companyDetails" element={<DashboardCompanyDetails />} />
-          <Route path="packages" element={<DashboardPackages />} />
-          <Route path="bikeBookings" element={<DashboardBikeBookings />} />
-          <Route path="packageBookings" element={<DashboardPackageBookings />} />
-          <Route path="contact" element={<DashboardContact />} />
-          <Route path="blogs" element={<DashboardBlogs />} />
+        <Route path="/dashboard/login" element={<DashboardLogin />} />
+        <Route element={<DashboardAuthGate />}>
+          <Route path="/dashboard" element={<AdminLayout />}>
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<DashboardHome />} />
+            <Route path="about" element={<DashboardAbout />} />
+            <Route path="bikes" element={<DashboardBikes />} />
+            <Route
+              path="companyDetails"
+              element={<DashboardCompanyDetails />}
+            />
+            <Route path="packages" element={<DashboardPackages />} />
+            <Route path="bikeBookings" element={<DashboardBikeBookings />} />
+            <Route
+              path="packageBookings"
+              element={<DashboardPackageBookings />}
+            />
+            <Route path="contact" element={<DashboardContact />} />
+            <Route path="blogs" element={<DashboardBlogs />} />
+          </Route>
         </Route>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
