@@ -1,3 +1,5 @@
+import { Plus, Save, Trash2, X } from "lucide-react";
+import DashboardButton from "./DashboardButton";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
 import { emptyItineraryDay } from "../../hooks/usePackagesAdmin";
@@ -83,24 +85,28 @@ export default function PackageFormModal({
             placeholder={placeholder}
             disabled={submitting}
           />
-          <button
+          <DashboardButton
             type="button"
             onClick={() => removeListItem(keyName, index)}
             disabled={submitting || draft[keyName].length <= 1}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+            variant="secondary"
+            size="sm"
+            icon={Trash2}
           >
             Remove
-          </button>
+          </DashboardButton>
         </div>
       ))}
-      <button
+      <DashboardButton
         type="button"
         onClick={() => addListItem(keyName)}
         disabled={submitting}
-        className="rounded-lg border border-dashed border-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:bg-opacity-10 disabled:opacity-50 dark:text-[var(--color-primary)] dark:hover:bg-[var(--color-primary)] dark:hover:bg-opacity-10"
+        variant="primary"
+        size="sm"
+        icon={Plus}
       >
-        + Add item
-      </button>
+        Add item
+      </DashboardButton>
     </fieldset>
   );
 
@@ -302,25 +308,29 @@ export default function PackageFormModal({
                 />
               </div>
               <div className="flex items-end sm:justify-end">
-                <button
+                <DashboardButton
                   type="button"
                   onClick={() => removeItineraryDay(index)}
                   disabled={submitting || draft.itinerary.length <= 1}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+                  variant="secondary"
+                  size="sm"
+                  icon={Trash2}
                 >
                   Remove
-                </button>
+                </DashboardButton>
               </div>
             </div>
           ))}
-          <button
+          <DashboardButton
             type="button"
             onClick={addItineraryDay}
             disabled={submitting}
-            className="rounded-lg border border-dashed border-[var(--color-primary)] px-3 py-2 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:bg-opacity-10 disabled:opacity-50 dark:text-[var(--color-primary)] dark:hover:bg-[var(--color-primary)] dark:hover:bg-opacity-10"
+            variant="primary"
+            size="sm"
+            icon={Plus}
           >
-            + Add day
-          </button>
+            Add day
+          </DashboardButton>
         </fieldset>
 
         {renderListEditor({
@@ -336,21 +346,23 @@ export default function PackageFormModal({
         })}
 
         <div className="flex flex-wrap justify-end gap-2 pt-2">
-          <button
+          <DashboardButton
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            variant="secondary"
+            icon={X}
           >
             Cancel
-          </button>
-          <button
+          </DashboardButton>
+          <DashboardButton
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600 disabled:opacity-50"
+            variant="primary"
+            icon={Save}
           >
             {submitting ? "Saving…" : isAdd ? "Add package" : "Save changes"}
-          </button>
+          </DashboardButton>
         </div>
       </form>
     </Modal>

@@ -204,11 +204,6 @@ function Blog() {
               Recent stories from the road
             </h2>
           </div>
-          <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-right sm:text-base">
-            Every article below is pulled from the blog admin and presented in
-            reverse chronological order so the newest travel advice is always
-            first.
-          </p>
         </div>
 
         {loading && (
@@ -363,12 +358,6 @@ function Blog() {
                             {blog.author}
                           </p>
                           <p className="text-slate-500">Author</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-slate-900">
-                            {blog.slug}
-                          </p>
-                          <p className="text-slate-500">Slug</p>
                         </div>
                       </div>
                     </div>

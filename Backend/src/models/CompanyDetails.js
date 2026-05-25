@@ -6,6 +6,7 @@ const companyDetailsSchema = new mongoose.Schema(
         logo: { type: String, trim: true, default: "" },
         contactEmail: { type: String, trim: true, default: "" },
         contactPhone: { type: String, trim: true, default: "" },
+        whatsapp: { type: String, trim: true, default: "" },
         location: { type: String, trim: true, default: "" },
         about: { type: String, trim: true, default: "" },
         facebook: { type: String, trim: true, default: "" },

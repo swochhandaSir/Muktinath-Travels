@@ -1,3 +1,6 @@
+import { Eye, Trash2 } from "lucide-react";
+import DashboardButton from "./DashboardButton";
+
 function formatDate(value) {
 	if (!value) return "-";
 	return new Intl.DateTimeFormat("en", {
@@ -130,20 +133,22 @@ export default function BikeBookingsTable({
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
 										<div className="flex flex-col items-start gap-2">
-											<button
-												type="button"
+											<DashboardButton
 												onClick={() => onView(booking)}
-												className="rounded bg-cyan-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-600"
+												variant="primary"
+												size="sm"
+												icon={Eye}
 											>
 												View
-											</button>
-											<button
-												type="button"
+											</DashboardButton>
+											<DashboardButton
 												onClick={() => onDelete(booking)}
-												className="rounded bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-600"
+												variant="danger"
+												size="sm"
+												icon={Trash2}
 											>
 												Delete
-											</button>
+											</DashboardButton>
 										</div>
 									</td>
 								</tr>

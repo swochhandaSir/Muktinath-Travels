@@ -1,4 +1,5 @@
 import { Edit, Mail, MapPin, Phone, Trash2 } from "lucide-react";
+import DashboardButton from "./DashboardButton";
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
@@ -71,28 +72,29 @@ export default function CompanyDetailsCard({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
+          <DashboardButton
             onClick={onEdit}
-            className="inline-flex items-center gap-2 rounded-md bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[var(--color-primary-dark)]"
+            variant="primary"
+            size="sm"
+            icon={Edit}
           >
-            <Edit className="h-3.5 w-3.5" />
             Edit
-          </button>
-          <button
-            type="button"
+          </DashboardButton>
+          <DashboardButton
             onClick={() => onDelete(details)}
-            className="inline-flex items-center gap-2 rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-red-600"
+            variant="danger"
+            size="sm"
+            icon={Trash2}
           >
-            <Trash2 className="h-3.5 w-3.5" />
             Delete
-          </button>
+          </DashboardButton>
         </div>
       </div>
 
       <div className="grid gap-5 p-5 md:grid-cols-3">
         <InfoRow icon={Mail} label="Email" value={details.contactEmail} />
         <InfoRow icon={Phone} label="Phone" value={details.contactPhone} />
+        <InfoRow icon={Phone} label="WhatsApp" value={details.whatsapp} />
         <InfoRow icon={MapPin} label="Location" value={details.location} />
       </div>
 

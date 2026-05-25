@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import DashboardButton from "./DashboardButton";
 
 export default function Modal({
 	open,
@@ -42,15 +43,14 @@ export default function Modal({
 					>
 						{title}
 					</h2>
-					<button
-						type="button"
+					<DashboardButton
 						onClick={onClose}
 						disabled={closeDisabled}
-						className="shrink-0 rounded-lg p-1 text-slate-500 hover:bg-slate-100 disabled:opacity-50 dark:hover:bg-slate-800"
+						variant="ghost"
+						size="icon"
+						icon={X}
 						aria-label="Close"
-					>
-						<X className="h-5 w-5" />
-					</button>
+					/>
 				</div>
 				{bodyScroll ? (
 					<div className="mt-4 min-h-0 flex-1 overflow-x-hidden overflow-y-auto pr-1">

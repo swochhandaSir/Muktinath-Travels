@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Bikes from "../pages/Bikes";
+import BikeDetails from "../pages/BikeDetails";
 import Blog from "../pages/Blog";
 import Contact from "../pages/Contact";
 import Package from "../pages/Package";
@@ -39,6 +40,7 @@ function AppRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/bikes" element={<Bikes />} />
+          <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/package" element={<Package />} />

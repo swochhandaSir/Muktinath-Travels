@@ -1,4 +1,6 @@
+import { Edit, Trash2 } from "lucide-react";
 import { formatDateTime } from "./BikeBookingsTable";
+import DashboardButton from "./DashboardButton";
 
 function getPlainText(html) {
 	return String(html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -104,20 +106,22 @@ export default function BlogsTable({ blogs, loading, onEdit, onDelete }) {
 									</td>
 									<td className="w-[7.5rem] border border-slate-200 px-3 py-4 dark:border-slate-700">
 										<div className="flex flex-col items-start gap-2">
-											<button
-												type="button"
+											<DashboardButton
 												onClick={() => onEdit(row)}
-												className="rounded bg-cyan-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-600"
+												variant="primary"
+												size="sm"
+												icon={Edit}
 											>
 												Edit
-											</button>
-											<button
-												type="button"
+											</DashboardButton>
+											<DashboardButton
 												onClick={() => onDelete(row)}
-												className="rounded bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-600"
+												variant="danger"
+												size="sm"
+												icon={Trash2}
 											>
 												Delete
-											</button>
+											</DashboardButton>
 										</div>
 									</td>
 								</tr>

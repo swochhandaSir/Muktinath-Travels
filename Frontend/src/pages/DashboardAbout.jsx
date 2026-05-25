@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Edit, Save, X } from "lucide-react";
 import CkEditorField from "../components/dashboard/CkEditorField";
+import DashboardButton from "../components/dashboard/DashboardButton";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ListErrorBanner from "../components/dashboard/ListErrorBanner";
 import Modal from "../components/dashboard/Modal";
@@ -198,13 +200,15 @@ export default function DashboardAbout() {
 										{formatDateTime(siteContent.content.updatedAt)}
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<button
+										<DashboardButton
 											type="button"
 											onClick={openEdit}
-											className="rounded bg-cyan-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-600"
+											variant="primary"
+											size="sm"
+											icon={Edit}
 										>
 											Edit
-										</button>
+										</DashboardButton>
 									</td>
 								</tr>
 							)}
@@ -319,21 +323,23 @@ export default function DashboardAbout() {
 					</div>
 
 					<div className="flex flex-wrap justify-end gap-2 pt-2">
-						<button
+						<DashboardButton
 							type="button"
 							onClick={closeEdit}
 							disabled={siteContent.submitting}
-							className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+							variant="secondary"
+							icon={X}
 						>
 							Cancel
-						</button>
-						<button
+						</DashboardButton>
+						<DashboardButton
 							type="submit"
 							disabled={siteContent.submitting}
-							className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
+							variant="primary"
+							icon={Save}
 						>
 							{siteContent.submitting ? "Saving..." : "Save changes"}
-						</button>
+						</DashboardButton>
 					</div>
 				</form>
 			</Modal>

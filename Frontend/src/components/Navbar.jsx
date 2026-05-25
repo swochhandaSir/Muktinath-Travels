@@ -19,7 +19,7 @@ const Navbar = () => {
   const { details } = useCompanyDetails();
   const { openBookingForm } = useBooking();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const brandName = details?.name || "Please provide CompanyName";
+  const brandName = details?.name || "Third Generation Rider Pvt. Ltd.";
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -32,7 +32,7 @@ const Navbar = () => {
             <img
               src={details.logo}
               alt={`${brandName} logo`}
-              className="h-10 w-auto shrink-0"
+              className="h-15 w-auto shrink-0"
             />
           ) : (
             <Link
