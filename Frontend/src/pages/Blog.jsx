@@ -101,7 +101,7 @@ function Blog() {
               <Sparkles className="h-4 w-4" />
               Travel stories, route tips, and local insights
             </div>
-            <h1 className="mt-6 max-w-3xl text-3xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 max-w-2xl text-2xl  tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
               Blog page for riders who want better trips, not just bookings.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
