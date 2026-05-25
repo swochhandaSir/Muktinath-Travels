@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
-import { Bike, Calendar, CheckCircle2, Gauge, Hash, XCircle } from "lucide-react";
+import {
+  Bike,
+  Calendar,
+  CheckCircle2,
+  Gauge,
+  Hash,
+  Trash2,
+  XCircle,
+} from "lucide-react";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
 
@@ -27,6 +35,10 @@ export default function BikeDetails() {
   const [bike, setBike] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleteLicenseSubmitting, setDeleteLicenseSubmitting] = useState(false);
+  const [deleteLicenseError, setDeleteLicenseError] = useState("");
+  const [deleteBlueBookIndex, setDeleteBlueBookIndex] = useState(null);
+  const [deleteBlueBookError, setDeleteBlueBookError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -61,6 +73,46 @@ export default function BikeDetails() {
     }));
   }, [bike]);
 
+  const deleteLicenseImage = async () => {
+    if (!bike?.licenseImage) return;
+    const confirmed = window.confirm("Delete this license image?");
+    if (!confirmed) return;
+
+    setDeleteLicenseSubmitting(true);
+    setDeleteLicenseError("");
+    try {
+      const res = await fetch(apiUrl(`/api/bikes/${bike.id}/license-image`), {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(await parseApiError(res));
+      setBike(await res.json());
+    } catch (err) {
+      setDeleteLicenseError(err.message || "Failed to delete license image.");
+    } finally {
+      setDeleteLicenseSubmitting(false);
+    }
+  };
+
+  const deleteBlueBookImage = async (index) => {
+    const confirmed = window.confirm("Delete this bluebook image?");
+    if (!confirmed) return;
+
+    setDeleteBlueBookIndex(index);
+    setDeleteBlueBookError("");
+    try {
+      const res = await fetch(
+        apiUrl(`/api/bikes/${bike.id}/bluebook-images/${index}`),
+        { method: "DELETE" },
+      );
+      if (!res.ok) throw new Error(await parseApiError(res));
+      setBike(await res.json());
+    } catch (err) {
+      setDeleteBlueBookError(err.message || "Failed to delete bluebook image.");
+    } finally {
+      setDeleteBlueBookIndex(null);
+    }
+  };
+
   if (loading) {
     return (
       <section className="min-h-[60vh] bg-slate-50 px-4 py-20 text-center text-slate-600">
@@ -77,6 +129,10 @@ export default function BikeDetails() {
       </section>
     );
   }
+
+  const blueBookImages = Array.isArray(bike.blueBookImages)
+    ? bike.blueBookImages
+    : [];
 
   return (
     <section className="bg-slate-50 py-8 sm:py-12">
@@ -155,7 +211,23 @@ export default function BikeDetails() {
 
         {bike.licenseImage && (
           <div className="mt-8">
-            <h2 className="text-xl font-bold text-slate-950">License Image</h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl font-bold text-slate-950">License Image</h2>
+              <button
+                type="button"
+                onClick={deleteLicenseImage}
+                disabled={deleteLicenseSubmitting}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                {deleteLicenseSubmitting ? "Deleting..." : "Delete license"}
+              </button>
+            </div>
+            {deleteLicenseError && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                {deleteLicenseError}
+              </p>
+            )}
             <a href={bike.licenseImage} target="_blank" rel="noreferrer">
               <img
                 src={bike.licenseImage}
@@ -163,6 +235,47 @@ export default function BikeDetails() {
                 className="mt-4 max-h-[520px] w-full rounded-lg border border-slate-200 bg-white object-contain p-2 shadow-sm"
               />
             </a>
+          </div>
+        )}
+
+        {blueBookImages.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-slate-950">Bluebook Images</h2>
+            {deleteBlueBookError && (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                {deleteBlueBookError}
+              </p>
+            )}
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {blueBookImages.map((imageUrl, index) => (
+                <div
+                  key={`${imageUrl}-${index}`}
+                  className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+                >
+                  <a href={imageUrl} target="_blank" rel="noreferrer">
+                    <img
+                      src={imageUrl}
+                      alt={`${bike.name} bluebook ${index + 1}`}
+                      className="h-64 w-full object-contain p-2"
+                    />
+                  </a>
+                  <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-3 py-2">
+                    <span className="text-sm font-medium text-slate-700">
+                      Image {index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => deleteBlueBookImage(index)}
+                      disabled={deleteBlueBookIndex === index}
+                      className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      {deleteBlueBookIndex === index ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

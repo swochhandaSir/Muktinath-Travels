@@ -14,6 +14,7 @@ const bikeSchema = new mongoose.Schema(
 		available: { type: Boolean, default: true },
 		engineCapacity: { type: Number, min: 0, default: 0 },
 		blueBookNumber: { type: String, trim: true, default: "" },
+		blueBookImages: [{ type: String, trim: true }],
 		licenseImage: { type: String, trim: true, default: "" },
 		qrCode: { type: String, trim: true, default: "" },
 	},
