@@ -1,7 +1,12 @@
 import { Download, Edit, ExternalLink, QrCode, Trash2 } from "lucide-react";
 import DashboardButton from "./DashboardButton";
 
-export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
+export default function BikesTable({
+  bikes,
+  loading,
+  onEdit,
+  onDelete,
+}) {
   const downloadQrCode = async (bike) => {
     if (!bike.qrCode) return;
 
@@ -28,7 +33,7 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
   return (
     <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left text-sm">
+        <table className="w-full min-w-[980px] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-[#e8eef4] text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
               <th className="whitespace-nowrap px-4 py-3 font-semibold">SN</th>
@@ -45,6 +50,12 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
                 Price/Day
               </th>
               <th className="whitespace-nowrap px-4 py-3 font-semibold">
+                License
+              </th>
+              <th className="whitespace-nowrap px-4 py-3 font-semibold">
+                Bluebook
+              </th>
+              <th className="whitespace-nowrap px-4 py-3 font-semibold">
                 QR Code
               </th>
               <th className="whitespace-nowrap px-4 py-3 font-semibold">
@@ -56,7 +67,7 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
             {loading ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                 >
                   Loading bikes...
@@ -65,7 +76,7 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
             ) : bikes.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                 >
                   No bikes yet. Click &quot;+ Add Bike&quot; to create one.
@@ -106,6 +117,65 @@ export default function BikesTable({ bikes, loading, onEdit, onDelete }) {
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">
                     {row.price}
+                  </td>
+                  <td className="px-4 py-2">
+                    {row.licenseImage ? (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={row.licenseImage}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group relative block"
+                          aria-label={`View license image for ${row.name}`}
+                        >
+                          <img
+                            src={row.licenseImage}
+                            alt=""
+                            className="h-12 w-16 rounded border border-slate-200 object-cover dark:border-slate-700"
+                          />
+                          <ExternalLink
+                            className="absolute right-1 top-1 h-3.5 w-3.5 rounded bg-white/85 p-0.5 text-slate-600 opacity-0 transition group-hover:opacity-100 dark:bg-slate-900/85 dark:text-slate-200"
+                            aria-hidden="true"
+                          />
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="text-slate-400">-</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2">
+                    {row.blueBookImages?.length > 0 ? (
+                      <div className="flex max-w-[220px] flex-wrap gap-2">
+                        {row.blueBookImages.map((imageUrl, index) => {
+                          return (
+                            <div
+                              key={`${imageUrl}-${index}`}
+                              className="flex items-center"
+                            >
+                              <a
+                                href={imageUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="group relative block"
+                                aria-label={`View bluebook ${index + 1} for ${row.name}`}
+                              >
+                                <img
+                                  src={imageUrl}
+                                  alt=""
+                                  className="h-12 w-16 rounded border border-slate-200 object-cover dark:border-slate-700"
+                                />
+                                <ExternalLink
+                                  className="absolute right-1 top-1 h-3.5 w-3.5 rounded bg-white/85 p-0.5 text-slate-600 opacity-0 transition group-hover:opacity-100 dark:bg-slate-900/85 dark:text-slate-200"
+                                  aria-hidden="true"
+                                />
+                              </a>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <span className="text-slate-400">-</span>
+                    )}
                   </td>
                   <td className="px-4 py-2">
                     {row.qrCode ? (

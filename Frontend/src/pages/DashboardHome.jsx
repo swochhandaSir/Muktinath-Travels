@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Edit, Save, X } from "lucide-react";
+import { Edit, Plus, Save, Trash2, X } from "lucide-react";
 import DashboardButton from "../components/dashboard/DashboardButton";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ListErrorBanner from "../components/dashboard/ListErrorBanner";
@@ -39,14 +39,64 @@ function ImagePreview({ src, fallbackSrc, alt }) {
 export default function DashboardHome() {
 	const siteContent = useSiteContentAdmin();
 	const [editOpen, setEditOpen] = useState(false);
+	const [processEditOpen, setProcessEditOpen] = useState(false);
 	const [heroImageFile, setHeroImageFile] = useState(null);
+	const [processBackgroundImageFile, setProcessBackgroundImageFile] =
+		useState(null);
 	const hero = siteContent.content.homeHero;
+	const process = siteContent.content.process;
 	const currentHeroImage = hero.imageUrl || heroImage;
 
 	const updateHero = (key, value) => {
 		siteContent.setDraft((draft) => ({
 			...draft,
 			homeHero: { ...draft.homeHero, [key]: value },
+		}));
+	};
+
+	const updateProcess = (key, value) => {
+		siteContent.setDraft((draft) => ({
+			...draft,
+			process: { ...draft.process, [key]: value },
+		}));
+	};
+
+	const updateProcessStep = (index, key, value) => {
+		siteContent.setDraft((draft) => ({
+			...draft,
+			process: {
+				...draft.process,
+				steps: draft.process.steps.map((step, stepIndex) =>
+					stepIndex === index ? { ...step, [key]: value } : step,
+				),
+			},
+		}));
+	};
+
+	const addProcessStep = () => {
+		siteContent.setDraft((draft) => ({
+			...draft,
+			process: {
+				...draft.process,
+				steps: [
+					...draft.process.steps,
+					{
+						number: `${String(draft.process.steps.length + 1).padStart(2, "0")}.`,
+						title: "",
+						description: "",
+					},
+				],
+			},
+		}));
+	};
+
+	const removeProcessStep = (index) => {
+		siteContent.setDraft((draft) => ({
+			...draft,
+			process: {
+				...draft.process,
+				steps: draft.process.steps.filter((_, stepIndex) => stepIndex !== index),
+			},
 		}));
 	};
 
@@ -63,12 +113,33 @@ export default function DashboardHome() {
 		setEditOpen(false);
 	};
 
+	const openProcessEdit = () => {
+		siteContent.resetDraft();
+		setProcessBackgroundImageFile(null);
+		setProcessEditOpen(true);
+	};
+
+	const closeProcessEdit = () => {
+		if (siteContent.submitting) return;
+		siteContent.resetDraft();
+		setProcessBackgroundImageFile(null);
+		setProcessEditOpen(false);
+	};
+
 	const onSubmit = async (e) => {
 		e.preventDefault();
 		const saved = await siteContent.saveDraft("homeHero", {
 			homeHeroImage: heroImageFile,
 		});
 		if (saved) setEditOpen(false);
+	};
+
+	const onProcessSubmit = async (e) => {
+		e.preventDefault();
+		const saved = await siteContent.saveDraft("process", {
+			processBackgroundImage: processBackgroundImageFile,
+		});
+		if (saved) setProcessEditOpen(false);
 	};
 
 	return (
@@ -115,44 +186,85 @@ export default function DashboardHome() {
 									</td>
 								</tr>
 							) : (
-								<tr className="text-slate-600 dark:text-slate-300">
-									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										1
-									</td>
-									<td className="border border-slate-200 px-4 py-4 font-medium text-slate-800 dark:border-slate-700 dark:text-slate-100">
-										Hero Section
-									</td>
-									<td className="max-w-64 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">{hero.title}</p>
-									</td>
-									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">{hero.subtitle}</p>
-									</td>
-									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										{hero.buttonText}
-									</td>
-									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<ImagePreview
-											src={hero.imageUrl}
-											fallbackSrc={heroImage}
-											alt="Home hero"
-										/>
-									</td>
-									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										{formatDateTime(siteContent.content.updatedAt)}
-									</td>
-									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<DashboardButton
-											type="button"
-											onClick={openEdit}
-											variant="primary"
-											size="sm"
-											icon={Edit}
-										>
-											Edit
-										</DashboardButton>
-									</td>
-								</tr>
+								<>
+									<tr className="text-slate-600 dark:text-slate-300">
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											1
+										</td>
+										<td className="border border-slate-200 px-4 py-4 font-medium text-slate-800 dark:border-slate-700 dark:text-slate-100">
+											Hero Section
+										</td>
+										<td className="max-w-64 border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<p className="line-clamp-2">{hero.title}</p>
+										</td>
+										<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<p className="line-clamp-2">{hero.subtitle}</p>
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											{hero.buttonText}
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<ImagePreview
+												src={hero.imageUrl}
+												fallbackSrc={heroImage}
+												alt="Home hero"
+											/>
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											{formatDateTime(siteContent.content.updatedAt)}
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<DashboardButton
+												type="button"
+												onClick={openEdit}
+												variant="primary"
+												size="sm"
+												icon={Edit}
+											>
+												Edit
+											</DashboardButton>
+										</td>
+									</tr>
+									<tr className="text-slate-600 dark:text-slate-300">
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											2
+										</td>
+										<td className="border border-slate-200 px-4 py-4 font-medium text-slate-800 dark:border-slate-700 dark:text-slate-100">
+											Process Section
+										</td>
+										<td className="max-w-64 border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<p className="line-clamp-2">
+												{process.heading} {process.subheading}
+											</p>
+										</td>
+										<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<p className="line-clamp-2">{process.description}</p>
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											{process.steps.length} steps
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<ImagePreview
+												src={process.backgroundImageUrl}
+												alt="Process background"
+											/>
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											{formatDateTime(siteContent.content.updatedAt)}
+										</td>
+										<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
+											<DashboardButton
+												type="button"
+												onClick={openProcessEdit}
+												variant="primary"
+												size="sm"
+												icon={Edit}
+											>
+												Edit
+											</DashboardButton>
+										</td>
+									</tr>
+								</>
 							)}
 						</tbody>
 					</table>
@@ -231,6 +343,175 @@ export default function DashboardHome() {
 						<DashboardButton
 							type="button"
 							onClick={closeEdit}
+							disabled={siteContent.submitting}
+							variant="secondary"
+							icon={X}
+						>
+							Cancel
+						</DashboardButton>
+						<DashboardButton
+							type="submit"
+							disabled={siteContent.submitting}
+							variant="primary"
+							icon={Save}
+						>
+							{siteContent.submitting ? "Saving..." : "Save changes"}
+						</DashboardButton>
+					</div>
+				</form>
+			</Modal>
+
+			<Modal
+				open={processEditOpen}
+				onClose={closeProcessEdit}
+				titleId="process-content-form-title"
+				title="Edit process section"
+				closeDisabled={siteContent.submitting}
+				panelClassName="max-w-3xl"
+			>
+				<form
+					className="mt-4 max-h-[75vh] space-y-4 overflow-y-auto pr-1"
+					onSubmit={onProcessSubmit}
+				>
+					{siteContent.formError && (
+						<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+							{siteContent.formError}
+						</p>
+					)}
+
+					<div className="grid gap-4 sm:grid-cols-2">
+						<div>
+							<label htmlFor="process-heading" className={labelClass}>
+								Heading
+							</label>
+							<input
+								id="process-heading"
+								className={inputClass}
+								value={siteContent.draft.process.heading}
+								onChange={(e) => updateProcess("heading", e.target.value)}
+								disabled={siteContent.submitting}
+							/>
+						</div>
+						<div>
+							<label htmlFor="process-subheading" className={labelClass}>
+								Subheading
+							</label>
+							<input
+								id="process-subheading"
+								className={inputClass}
+								value={siteContent.draft.process.subheading}
+								onChange={(e) => updateProcess("subheading", e.target.value)}
+								disabled={siteContent.submitting}
+							/>
+						</div>
+					</div>
+
+					<div>
+						<label htmlFor="process-description" className={labelClass}>
+							Description
+						</label>
+						<textarea
+							id="process-description"
+							className={`${inputClass} min-h-24 resize-y`}
+							value={siteContent.draft.process.description}
+							onChange={(e) => updateProcess("description", e.target.value)}
+							disabled={siteContent.submitting}
+						/>
+					</div>
+
+					<div>
+						<label htmlFor="process-background-image" className={labelClass}>
+							Background image
+						</label>
+						<input
+							id="process-background-image"
+							type="file"
+							accept="image/*"
+							className={inputClass}
+							onChange={(e) =>
+								setProcessBackgroundImageFile(e.target.files?.[0] || null)
+							}
+							disabled={siteContent.submitting}
+						/>
+						<div className="text-sm text-slate-600 dark:text-slate-300">
+							<p>current image:</p>
+							<p>{siteContent.draft.process.backgroundImageUrl}</p>
+						</div>
+					</div>
+
+					<div className="space-y-4">
+						<div className="flex items-center justify-between gap-3">
+							<p className={labelClass}>Steps</p>
+							<DashboardButton
+								type="button"
+								onClick={addProcessStep}
+								disabled={siteContent.submitting}
+								variant="secondary"
+								size="sm"
+								icon={Plus}
+							>
+								Add step
+							</DashboardButton>
+						</div>
+						{siteContent.draft.process.steps.map((step, index) => (
+							<div
+								key={index}
+								className="rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+							>
+								<div className="flex items-center justify-between gap-3">
+									<p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+										Step {index + 1}
+									</p>
+									<DashboardButton
+										type="button"
+										onClick={() => removeProcessStep(index)}
+										disabled={siteContent.submitting}
+										variant="danger"
+										size="sm"
+										icon={Trash2}
+									>
+										Remove
+									</DashboardButton>
+								</div>
+								<div className="mt-3 grid gap-3 sm:grid-cols-[120px_1fr]">
+									<input
+										className={inputClass}
+										value={step.number}
+										onChange={(e) =>
+											updateProcessStep(index, "number", e.target.value)
+										}
+										placeholder="01."
+										disabled={siteContent.submitting}
+									/>
+									<input
+										className={inputClass}
+										value={step.title}
+										onChange={(e) =>
+											updateProcessStep(index, "title", e.target.value)
+										}
+										placeholder="Step title"
+										disabled={siteContent.submitting}
+									/>
+								</div>
+								<div className="mt-3">
+									<textarea
+										className={`${inputClass} min-h-20 resize-y`}
+										value={step.description}
+										onChange={(e) =>
+											updateProcessStep(index, "description", e.target.value)
+										}
+										placeholder="Step description"
+										disabled={siteContent.submitting}
+									/>
+								</div>
+							</div>
+						))}
+					</div>
+
+					<div className="flex flex-wrap justify-end gap-2 pt-2">
+						<DashboardButton
+							type="button"
+							onClick={closeProcessEdit}
 							disabled={siteContent.submitting}
 							variant="secondary"
 							icon={X}

@@ -80,6 +80,24 @@ export default function CompanyDetailsFormModal({
         </div>
 
         <div>
+          <label htmlFor="company-business-hours" className={labelClass}>
+            Business hours
+          </label>
+          <textarea
+            id="company-business-hours"
+            className={`${inputClass} min-h-24 resize-y`}
+            value={draft.businessHours}
+            onChange={(e) =>
+              onDraftChange((d) => ({ ...d, businessHours: e.target.value }))
+            }
+            placeholder={`Monday - Friday: 9:00 AM - 6:00 PM
+Saturday: 10:00 AM - 5:00 PM
+Sunday: Closed`}
+            disabled={submitting}
+          />
+        </div>
+
+        <div>
           <label htmlFor="company-about" className={labelClass}>
             About
           </label>

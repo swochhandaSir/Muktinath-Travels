@@ -20,6 +20,10 @@ const DashboardBikes = () => {
 				message={bikesAdmin.listError}
 				onRetry={bikesAdmin.loadBikes}
 			/>
+			<ListErrorBanner
+				message={bikesAdmin.imageDeleteError}
+				onRetry={bikesAdmin.loadBikes}
+			/>
 
 			<BikesTable
 				bikes={bikesAdmin.bikes}
@@ -36,11 +40,15 @@ const DashboardBikes = () => {
 				onDraftChange={bikesAdmin.setDraft}
 				formError={bikesAdmin.formError}
 				submitting={bikesAdmin.formSubmitting}
+				imageDeleteSubmitting={bikesAdmin.imageDeleteSubmitting}
+				imageDeleteError={bikesAdmin.imageDeleteError}
 				imageInputRef={bikesAdmin.imageInputRef}
 				licenseImageInputRef={bikesAdmin.licenseImageInputRef}
 				blueBookImagesInputRefs={bikesAdmin.blueBookImagesInputRefs}
 				onClose={bikesAdmin.closeForm}
 				onSubmit={bikesAdmin.submitForm}
+				onDeleteLicenseImage={bikesAdmin.deleteLicenseImage}
+				onDeleteBlueBookImage={bikesAdmin.deleteBlueBookImage}
 			/>
 
 			<DeleteBikeModal

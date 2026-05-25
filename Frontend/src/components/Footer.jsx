@@ -10,6 +10,16 @@ const Footer = () => {
   const location = details?.location || "Please provide location";
   const email = details?.contactEmail || "Please provide email";
   const phone = details?.contactPhone || "Please provide phone number";
+  const businessHours = details?.businessHours
+    ? details.businessHours
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+    : [
+        "Monday - Friday: 9:00 AM - 6:00 PM",
+        "Saturday: 10:00 AM - 5:00 PM",
+        "Sunday: Closed",
+      ];
 
   return (
     <footer className="bg-slate-900 text-white">
@@ -27,7 +37,7 @@ const Footer = () => {
               ["About", "/about"],
               ["Bikes", "/bikes"],
               ["Packages", "/package"],
-              ["Services", "/service"],
+              // ["Services", "/service"],
               ["Blog", "/blog"],
               ["Contact", "/contact"],
             ].map(([label, to]) => (
@@ -46,9 +56,9 @@ const Footer = () => {
         <div>
           <h3 className="mb-6 text-xl font-semibold">Business Hours</h3>
           <ul className="space-y-3 text-gray-400">
-            <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-            <li>Saturday: 10:00 AM - 5:00 PM</li>
-            <li>Sunday: Closed</li>
+            {businessHours.map((line, index) => (
+              <li key={`${line}-${index}`}>{line}</li>
+            ))}
           </ul>
         </div>
 

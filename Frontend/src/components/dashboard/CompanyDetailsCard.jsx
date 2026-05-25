@@ -100,6 +100,15 @@ export default function CompanyDetailsCard({
 
       <div className="border-t border-slate-100 p-5 dark:border-slate-800">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Business hours
+        </p>
+        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-200">
+          {details.businessHours || "-"}
+        </p>
+      </div>
+
+      <div className="border-t border-slate-100 p-5 dark:border-slate-800">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           About
         </p>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700 dark:text-slate-200">

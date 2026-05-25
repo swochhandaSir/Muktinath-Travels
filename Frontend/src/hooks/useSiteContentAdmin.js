@@ -43,6 +43,10 @@ function toDraft(content) {
 			...merged.about,
 			featuresText: featuresToEditorHtml(merged.about.features),
 		},
+		process: {
+			...merged.process,
+			steps: merged.process.steps.map((step) => ({ ...step })),
+		},
 	};
 }
 
@@ -52,6 +56,17 @@ function draftToPayload(draft) {
 		about: {
 			...draft.about,
 			features: featuresEditorHtmlToArray(draft.about.featuresText),
+		},
+		process: {
+			...draft.process,
+			steps: draft.process.steps
+				.map((step, index) => ({
+					number:
+						step.number.trim() || `${String(index + 1).padStart(2, "0")}.`,
+					title: step.title.trim(),
+					description: step.description.trim(),
+				}))
+				.filter((step) => step.number || step.title || step.description),
 		},
 	};
 }
