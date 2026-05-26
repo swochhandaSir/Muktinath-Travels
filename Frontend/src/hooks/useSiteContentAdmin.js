@@ -47,6 +47,12 @@ function toDraft(content) {
 			...merged.process,
 			steps: merged.process.steps.map((step) => ({ ...step })),
 		},
+		service: {
+			...merged.service,
+			cards: merged.service.cards.map((card) => ({ ...card })),
+			stats: merged.service.stats.map((stat) => ({ ...stat })),
+			reviews: merged.service.reviews.map((review) => ({ ...review })),
+		},
 	};
 }
 
@@ -67,6 +73,29 @@ function draftToPayload(draft) {
 					description: step.description.trim(),
 				}))
 				.filter((step) => step.number || step.title || step.description),
+		},
+		service: {
+			...draft.service,
+			cards: draft.service.cards
+				.map((card) => ({
+					icon: card.icon.trim(),
+					title: card.title.trim(),
+					description: card.description.trim(),
+				}))
+				.filter((card) => card.icon || card.title || card.description),
+			stats: draft.service.stats
+				.map((stat) => ({
+					icon: stat.icon.trim(),
+					number: stat.number.trim(),
+					label: stat.label.trim(),
+				}))
+				.filter((stat) => stat.icon || stat.number || stat.label),
+			reviews: draft.service.reviews
+				.map((review) => ({
+					name: review.name.trim(),
+					review: review.review.trim(),
+				}))
+				.filter((review) => review.name || review.review),
 		},
 	};
 }
