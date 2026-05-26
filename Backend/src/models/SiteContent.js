@@ -46,6 +46,46 @@ const processSchema = new mongoose.Schema(
 	{ _id: false },
 );
 
+const serviceCardSchema = new mongoose.Schema(
+	{
+		icon: { type: String, trim: true, default: "" },
+		title: { type: String, trim: true, default: "" },
+		description: { type: String, trim: true, default: "" },
+	},
+	{ _id: false },
+);
+
+const serviceStatSchema = new mongoose.Schema(
+	{
+		icon: { type: String, trim: true, default: "" },
+		number: { type: String, trim: true, default: "" },
+		label: { type: String, trim: true, default: "" },
+	},
+	{ _id: false },
+);
+
+const serviceReviewSchema = new mongoose.Schema(
+	{
+		name: { type: String, trim: true, default: "" },
+		review: { type: String, trim: true, default: "" },
+	},
+	{ _id: false },
+);
+
+const serviceSchema = new mongoose.Schema(
+	{
+		heading: { type: String, trim: true, default: "" },
+		description: { type: String, trim: true, default: "" },
+		cards: { type: [serviceCardSchema], default: [] },
+		statsBackgroundImageUrl: { type: String, trim: true, default: "" },
+		stats: { type: [serviceStatSchema], default: [] },
+		reviewsHeading: { type: String, trim: true, default: "" },
+		reviewsDescription: { type: String, trim: true, default: "" },
+		reviews: { type: [serviceReviewSchema], default: [] },
+	},
+	{ _id: false },
+);
+
 const siteContentSchema = new mongoose.Schema(
 	{
 		key: {
@@ -58,6 +98,7 @@ const siteContentSchema = new mongoose.Schema(
 		homeHero: { type: homeHeroSchema, default: () => ({}) },
 		about: { type: aboutSchema, default: () => ({}) },
 		process: { type: processSchema, default: () => ({}) },
+		service: { type: serviceSchema, default: () => ({}) },
 	},
 	{ timestamps: true },
 );
