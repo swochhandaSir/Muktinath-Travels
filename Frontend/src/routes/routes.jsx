@@ -21,6 +21,7 @@ import DashboardContact from "../pages/DashboardContact";
 import DashboardBlogs from "../pages/DashboardBlogs";
 import DashboardHome from "../pages/DashboardHome";
 import DashboardAbout from "../pages/DashboardAbout";
+import DashboardService from "../pages/DashboardService";
 import DashboardLogin from "../pages/DashboardLogin";
 
 function AppRouter() {
@@ -33,6 +34,7 @@ function AppRouter() {
             <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<DashboardHome />} />
             <Route path="about" element={<DashboardAbout />} />
+            <Route path="service" element={<DashboardService />} />
             <Route path="bikes" element={<DashboardBikes />} />
             <Route
               path="companyDetails"

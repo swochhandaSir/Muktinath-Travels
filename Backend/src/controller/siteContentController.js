@@ -57,6 +57,55 @@ const DEFAULT_SITE_CONTENT = {
 			},
 		],
 	},
+	service: {
+		heading: "Our Services",
+		description:
+			"Explore our comprehensive range of car rental services designed to meet your needs. From short-term rentals to long-term leases, we offer flexible options for individuals and businesses alike. Our services include a wide selection of vehicles, competitive pricing, and exceptional customer support to ensure a seamless rental experience.",
+		cards: [
+			{
+				icon: "Car",
+				title: "Wide Vehicle Selection",
+				description:
+					"Choose from a diverse fleet of cars, SUVs, and luxury vehicles for every type of journey.",
+			},
+			{
+				icon: "ShieldCheck",
+				title: "Full Insurance Coverage",
+				description:
+					"Travel with confidence using our comprehensive insurance coverage on every rental.",
+			},
+			{
+				icon: "Headphones",
+				title: "24/7 Customer Support",
+				description:
+					"Our support team is available anytime for bookings, queries, and roadside assistance.",
+			},
+		],
+		statsBackgroundImageUrl:
+			"https://media.istockphoto.com/id/1190475811/photo/rush-in-the-city.webp?a=1&b=1&s=612x612&w=0&k=20&c=pgEobykYrVwHxzRyCKixA6TSA4wh4yCyj_aY9TuqLm4=",
+		stats: [
+			{ icon: "Car", number: "120+", label: "Cars Available" },
+			{ icon: "Users", number: "3500+", label: "Happy Customers" },
+			{ icon: "MapPin", number: "25+", label: "Cities Covered" },
+			{ icon: "Briefcase", number: "25+", label: "Years Experience" },
+		],
+		reviewsHeading: "Our Clients Reviews",
+		reviewsDescription: "Hear what our clients have to say about us!",
+		reviews: [
+			{ name: "Rudra pratap adhikari", review: "Great service." },
+			{ name: "Sanjana", review: "Excellent experience overall" },
+			{
+				name: "Aayush Sharma",
+				review:
+					"Great service for a family trip. The SUV was in good condition and the pricing was fair.",
+			},
+			{
+				name: "Pratik Gurung",
+				review:
+					"Booking was quick and support was helpful when I needed to extend my rental by one day.",
+			},
+		],
+	},
 };
 
 function cleanText(value) {
@@ -87,6 +136,38 @@ function normalizeProcessSteps(value) {
 		.filter((step) => step.number || step.title || step.description);
 }
 
+function normalizeServiceCards(value) {
+	if (!Array.isArray(value)) return [];
+	return value
+		.map((card) => ({
+			icon: cleanText(card?.icon),
+			title: cleanText(card?.title),
+			description: cleanText(card?.description),
+		}))
+		.filter((card) => card.icon || card.title || card.description);
+}
+
+function normalizeServiceStats(value) {
+	if (!Array.isArray(value)) return [];
+	return value
+		.map((stat) => ({
+			icon: cleanText(stat?.icon),
+			number: cleanText(stat?.number),
+			label: cleanText(stat?.label),
+		}))
+		.filter((stat) => stat.icon || stat.number || stat.label);
+}
+
+function normalizeServiceReviews(value) {
+	if (!Array.isArray(value)) return [];
+	return value
+		.map((review) => ({
+			name: cleanText(review?.name),
+			review: cleanText(review?.review),
+		}))
+		.filter((review) => review.name || review.review);
+}
+
 function mergeWithDefaults(doc) {
 	const source = doc?.toObject ? doc.toObject() : doc || {};
 	return {
@@ -114,6 +195,19 @@ function mergeWithDefaults(doc) {
 					}))
 				: DEFAULT_SITE_CONTENT.process.steps,
 		},
+		service: {
+			...DEFAULT_SITE_CONTENT.service,
+			...(source.service || {}),
+			cards: source.service?.cards?.length
+				? source.service.cards
+				: DEFAULT_SITE_CONTENT.service.cards,
+			stats: source.service?.stats?.length
+				? source.service.stats
+				: DEFAULT_SITE_CONTENT.service.stats,
+			reviews: source.service?.reviews?.length
+				? source.service.reviews
+				: DEFAULT_SITE_CONTENT.service.reviews,
+		},
 		createdAt: source.createdAt || null,
 		updatedAt: source.updatedAt || null,
 	};
@@ -125,6 +219,7 @@ function buildPayload(body) {
 	const homeHero = parsedBody.homeHero || {};
 	const about = parsedBody.about || {};
 	const process = parsedBody.process || {};
+	const service = parsedBody.service || {};
 
 	return {
 		homeHero: {
@@ -152,6 +247,16 @@ function buildPayload(body) {
 			backgroundImageUrl: cleanText(process.backgroundImageUrl),
 			steps: normalizeProcessSteps(process.steps),
 		},
+		service: {
+			heading: cleanText(service.heading),
+			description: cleanText(service.description),
+			cards: normalizeServiceCards(service.cards),
+			statsBackgroundImageUrl: cleanText(service.statsBackgroundImageUrl),
+			stats: normalizeServiceStats(service.stats),
+			reviewsHeading: cleanText(service.reviewsHeading),
+			reviewsDescription: cleanText(service.reviewsDescription),
+			reviews: normalizeServiceReviews(service.reviews),
+		},
 	};
 }
 
@@ -160,6 +265,7 @@ async function applyUploadedImages(payload, files) {
 	const aboutPrimaryImage = files?.aboutPrimaryImage?.[0];
 	const aboutSecondaryImage = files?.aboutSecondaryImage?.[0];
 	const processBackgroundImage = files?.processBackgroundImage?.[0];
+	const serviceStatsBackgroundImage = files?.serviceStatsBackgroundImage?.[0];
 
 	if (homeHeroImage?.buffer) {
 		payload.homeHero.imageUrl = await uploadImageBuffer(
@@ -186,6 +292,13 @@ async function applyUploadedImages(payload, files) {
 		payload.process.backgroundImageUrl = await uploadImageBuffer(
 			processBackgroundImage.buffer,
 			"vehicle-rental/site-content/process",
+		);
+	}
+
+	if (serviceStatsBackgroundImage?.buffer) {
+		payload.service.statsBackgroundImageUrl = await uploadImageBuffer(
+			serviceStatsBackgroundImage.buffer,
+			"vehicle-rental/site-content/service",
 		);
 	}
 }

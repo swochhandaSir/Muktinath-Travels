@@ -24,6 +24,7 @@ function withSiteContentUpload(req, res, next) {
 		{ name: "aboutPrimaryImage", maxCount: 1 },
 		{ name: "aboutSecondaryImage", maxCount: 1 },
 		{ name: "processBackgroundImage", maxCount: 1 },
+		{ name: "serviceStatsBackgroundImage", maxCount: 1 },
 	])(req, res, (err) => {
 		if (!err) {
 			next();
