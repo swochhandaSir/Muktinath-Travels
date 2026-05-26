@@ -29,6 +29,33 @@ export const defaultSiteContent = {
 		secondaryImageUrl:
 			"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
 	},
+	process: {
+		heading: "Travel Agency",
+		subheading: "Process",
+		description:
+			"Bike rental made easy! Follow our simple 3-step process to get on the road in no time. Choose your bike, book online, and enjoy your ride!",
+		backgroundImageUrl:
+			"https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1920&q=80",
+		steps: [
+			{
+				number: "01.",
+				title: "Come In Contact",
+				description:
+					"Come in contact with us to get more information about our bike rental services.",
+			},
+			{
+				number: "02.",
+				title: "Choose A Bike",
+				description: "Browse our fleet and select the perfect bike for your needs.",
+			},
+			{
+				number: "03.",
+				title: "Enjoy Riding",
+				description:
+					"Sit back, relax, and enjoy your journey with our reliable and comfortable bikes.",
+			},
+		],
+	},
 };
 
 export function mergeSiteContent(content) {
@@ -45,6 +72,18 @@ export function mergeSiteContent(content) {
 			features: content?.about?.features?.length
 				? content.about.features
 				: defaultSiteContent.about.features,
+		},
+		process: {
+			...defaultSiteContent.process,
+			...(content?.process || {}),
+			steps: content?.process?.steps?.length
+				? content.process.steps.map((step, index) => ({
+						number:
+							step.number || `${String(index + 1).padStart(2, "0")}.`,
+						title: step.title || "",
+						description: step.description || "",
+					}))
+				: defaultSiteContent.process.steps,
 		},
 	};
 }

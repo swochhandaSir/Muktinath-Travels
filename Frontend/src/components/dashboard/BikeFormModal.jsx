@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Save, X } from "lucide-react";
+import { Plus, Save, Trash2, X } from "lucide-react";
 import DashboardButton from "./DashboardButton";
 import Modal from "./Modal";
 import { inputClass, labelClass } from "./bikeFormStyles";
@@ -12,11 +12,15 @@ export default function BikeFormModal({
   onDraftChange,
   formError,
   submitting,
+  imageDeleteSubmitting,
+  imageDeleteError,
   imageInputRef,
   licenseImageInputRef,
   blueBookImagesInputRefs,
   onClose,
   onSubmit,
+  onDeleteLicenseImage,
+  onDeleteBlueBookImage,
 }) {
   const isAdd = mode === "add";
   const [blueBookImageFieldCount, setBlueBookImageFieldCount] = useState(1);
@@ -39,6 +43,11 @@ export default function BikeFormModal({
         {formError && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
             {formError}
+          </p>
+        )}
+        {imageDeleteError && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+            {imageDeleteError}
           </p>
         )}
 
@@ -251,17 +260,42 @@ export default function BikeFormModal({
             disabled={submitting}
           />
           {!isAdd && bike?.licenseImage && (
-            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              Current:{" "}
-              <a
-                href={bike.licenseImage}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[var(--color-primary)] underline dark:text-[var(--color-primary)]"
-              >
-                view license image
+            <div className="mt-3 flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+              <a href={bike.licenseImage} target="_blank" rel="noreferrer">
+                <img
+                  src={bike.licenseImage}
+                  alt={`${bike.name} license`}
+                  className="h-20 w-28 rounded object-cover"
+                />
               </a>
-            </p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  Current license image
+                </p>
+                <a
+                  href={bike.licenseImage}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-[var(--color-primary)] underline dark:text-[var(--color-primary)]"
+                >
+                  view image
+                </a>
+              </div>
+              <DashboardButton
+                type="button"
+                onClick={() => onDeleteLicenseImage(bike)}
+                disabled={
+                  submitting || imageDeleteSubmitting === `${bike.id}-license`
+                }
+                variant="danger"
+                size="sm"
+                icon={Trash2}
+              >
+                {imageDeleteSubmitting === `${bike.id}-license`
+                  ? "Deleting..."
+                  : "Delete"}
+              </DashboardButton>
+            </div>
           )}
         </div>
 
@@ -300,10 +334,42 @@ export default function BikeFormModal({
             Add bluebook image
           </button>
           {!isAdd && bike?.blueBookImages?.length > 0 && (
-            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              Current: {bike.blueBookImages.length} image
-              {bike.blueBookImages.length === 1 ? "" : "s"}
-            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {bike.blueBookImages.map((imageUrl, index) => (
+                <div
+                  key={`${imageUrl}-${index}`}
+                  className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700"
+                >
+                  <a href={imageUrl} target="_blank" rel="noreferrer">
+                    <img
+                      src={imageUrl}
+                      alt={`${bike.name} bluebook ${index + 1}`}
+                      className="h-32 w-full object-contain p-2"
+                    />
+                  </a>
+                  <div className="flex items-center justify-between gap-2 border-t border-slate-100 px-3 py-2 dark:border-slate-700">
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                      Bluebook {index + 1}
+                    </span>
+                    <DashboardButton
+                      type="button"
+                      onClick={() => onDeleteBlueBookImage(index, bike)}
+                      disabled={
+                        submitting ||
+                        imageDeleteSubmitting === `${bike.id}-bluebook-${index}`
+                      }
+                      variant="danger"
+                      size="sm"
+                      icon={Trash2}
+                    >
+                      {imageDeleteSubmitting === `${bike.id}-bluebook-${index}`
+                        ? "Deleting..."
+                        : "Delete"}
+                    </DashboardButton>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 

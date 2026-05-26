@@ -52,7 +52,6 @@ function AppRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/bikes" element={<Bikes />} />
-          <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:blogSlug" element={<BlogDetails />} />
           <Route path="/contact" element={<Contact />} />
@@ -60,6 +59,7 @@ function AppRouter() {
           <Route path="/package/:packageId" element={<PackageDetails />} />
           <Route path="/service" element={<Service />} />
         </Route>
+        <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
       </Routes>
     </BrowserRouter>
   );

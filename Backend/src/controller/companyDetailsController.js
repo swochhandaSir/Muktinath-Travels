@@ -7,6 +7,7 @@ const textFields = [
 	"contactEmail",
 	"contactPhone",
 	"location",
+	"businessHours",
 	"about",
 	"facebook",
 	"tiktok",
@@ -25,6 +26,7 @@ function toDTO(doc) {
 		contactPhone: o.contactPhone || "",
 		whatsapp: o.whatsapp || "",
 		location: o.location || "",
+		businessHours: o.businessHours || "",
 		about: o.about || "",
 		facebook: o.facebook || "",
 		tiktok: o.tiktok || "",
@@ -127,4 +129,3 @@ export const deleteCompanyDetails = async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 };
-

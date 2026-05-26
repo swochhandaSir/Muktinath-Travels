@@ -23,6 +23,7 @@ function withSiteContentUpload(req, res, next) {
 		{ name: "homeHeroImage", maxCount: 1 },
 		{ name: "aboutPrimaryImage", maxCount: 1 },
 		{ name: "aboutSecondaryImage", maxCount: 1 },
+		{ name: "processBackgroundImage", maxCount: 1 },
 	])(req, res, (err) => {
 		if (!err) {
 			next();
