@@ -289,13 +289,15 @@ function Blog() {
                     </div>
 
                     <div className="mt-8">
-                      <a
-                        href="#all-posts"
+                      <Link
+                        to={`/blog/${encodeURIComponent(
+                          featuredBlog.slug || featuredBlog.id,
+                        )}`}
                         className="inline-flex items-center gap-2 rounded-full bg-(--color-primary) px-5 py-3 font-semibold text-white transition hover:bg-(--color-primary-dark)"
                       >
-                        Explore more stories
+                        Read full story
                         <ArrowRight className="h-4 w-4" />
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -317,50 +319,59 @@ function Blog() {
                     transition={{ duration: 0.4, delay: index * 0.04 }}
                     className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <div className="relative">
-                      <img
-                        src={
-                          getHighResImage(blog.image, 900) ||
-                          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
-                        }
-                        alt={blog.title}
-                        className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute left-4 top-4 rounded-full bg-slate-950/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur">
-                        {formatDate(blog.createdAt)}
-                      </div>
-                    </div>
-
-                    <div className="p-6">
-                      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
-                          {estimateReadTime(blog.description)} min read
-                        </span>
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
-                          {(blog.comments || []).filter(Boolean).length}{" "}
-                          comments
-                        </span>
-                      </div>
-
-                      <h3 className="mt-4 text-xl font-black leading-tight text-slate-950">
-                        {blog.title}
-                      </h3>
-
-                      <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">
-                        {excerpt.length > 200
-                          ? `${excerpt.slice(0, 200)}...`
-                          : excerpt}
-                      </p>
-
-                      <div className="mt-6 flex items-center justify-between gap-4 border-t border-slate-200 pt-4 text-sm">
-                        <div>
-                          <p className="font-semibold text-slate-900">
-                            {blog.author}
-                          </p>
-                          <p className="text-slate-500">Author</p>
+                    <Link
+                      to={`/blog/${encodeURIComponent(blog.slug || blog.id)}`}
+                      className="block h-full"
+                    >
+                      <div className="relative">
+                        <img
+                          src={
+                            getHighResImage(blog.image, 900) ||
+                            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
+                          }
+                          alt={blog.title}
+                          className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute left-4 top-4 rounded-full bg-slate-950/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white backdrop-blur">
+                          {formatDate(blog.createdAt)}
                         </div>
                       </div>
-                    </div>
+
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                            {estimateReadTime(blog.description)} min read
+                          </span>
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                            {(blog.comments || []).filter(Boolean).length}{" "}
+                            comments
+                          </span>
+                        </div>
+
+                        <h3 className="mt-4 text-xl font-black leading-tight text-slate-950">
+                          {blog.title}
+                        </h3>
+
+                        <p className="mt-3 line-clamp-4 text-sm leading-7 text-slate-600">
+                          {excerpt.length > 200
+                            ? `${excerpt.slice(0, 200)}...`
+                            : excerpt}
+                        </p>
+
+                        <div className="mt-6 flex items-center justify-between gap-4 border-t border-slate-200 pt-4 text-sm">
+                          <div>
+                            <p className="font-semibold text-slate-900">
+                              {blog.author}
+                            </p>
+                            <p className="text-slate-500">Author</p>
+                          </div>
+                          <span className="inline-flex items-center gap-2 font-semibold text-(--color-primary)">
+                            Read more
+                            <ArrowRight className="h-4 w-4" />
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
                   </motion.article>
                 );
               })}

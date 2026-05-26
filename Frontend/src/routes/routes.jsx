@@ -4,6 +4,7 @@ import About from "../pages/About";
 import Bikes from "../pages/Bikes";
 import BikeDetails from "../pages/BikeDetails";
 import Blog from "../pages/Blog";
+import BlogDetails from "../pages/BlogDetails";
 import Contact from "../pages/Contact";
 import Package from "../pages/Package";
 import PackageDetails from "../pages/PackageDetails";
@@ -53,6 +54,7 @@ function AppRouter() {
           <Route path="/bikes" element={<Bikes />} />
           <Route path="/bike-details/:bikeId" element={<BikeDetails />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:blogSlug" element={<BlogDetails />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/package" element={<Package />} />
           <Route path="/package/:packageId" element={<PackageDetails />} />
