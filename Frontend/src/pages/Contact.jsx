@@ -1,64 +1,10 @@
 import { useCompanyDetails } from "../hooks/useCompanyDetails";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, } from "react";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
 
-function MapComponent({ location }) {
-  const [embedUrl, setEmbedUrl] = useState("");
 
-  useEffect(() => {
-    if (!location) return;
-
-    const geocode = async () => {
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`,
-        );
-        const results = await response.json();
-
-        if (results.length > 0) {
-          const { lat, lon } = results[0];
-          const latitude = Number(lat);
-          const longitude = Number(lon);
-
-          if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
-            const delta = 0.03;
-            const bbox = [
-              longitude - delta,
-              latitude - delta,
-              longitude + delta,
-              latitude + delta,
-            ].join(",");
-
-            setEmbedUrl(
-              `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latitude}%2C${longitude}`,
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error geocoding location:", error);
-      }
-    };
-
-    geocode();
-  }, [location]);
-
-  return embedUrl ? (
-    <iframe
-      title={`Map of ${location}`}
-      src={embedUrl}
-      className="h-96 w-full"
-      style={{ border: 0 }}
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    />
-  ) : (
-    <div className="h-96 w-full flex items-center justify-center bg-slate-100 text-slate-500">
-      <p>Loading map...</p>
-    </div>
-  );
-}
 
 export default function Contact() {
   const { details, loading } = useCompanyDetails();
@@ -398,12 +344,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Map Section */}
-        {details?.location && (
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200">
-            <MapComponent location={details.location} />
-          </div>
-        )}
+      
       </div>
     </div>
   );
