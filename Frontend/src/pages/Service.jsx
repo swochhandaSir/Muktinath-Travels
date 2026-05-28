@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import {
 	Briefcase,
 	Car,
@@ -37,7 +38,7 @@ function RichText({ html, className = "" }) {
 }
 
 const Service = () => {
-	const { content, loading } = useSiteContent();
+	const { content, loading } = useSiteContent("service");
 	const service = content.service;
 	const reviewsPerPage = 2;
 	const reviewPages = Array.from(
@@ -65,7 +66,12 @@ const Service = () => {
 
 	return (
 		<div className="bg-white">
-			<section className="bg-white py-16">
+			<motion.section
+				className="bg-white py-16"
+				initial={{ opacity: 0, y: 24 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.7, ease: "easeOut" }}
+			>
 				<div className="mx-auto max-w-7xl px-6 text-center">
 					<h2 className="text-4xl font-bold tracking-wide text-slate-950 md:text-5xl">
 						{service.heading}
@@ -76,14 +82,19 @@ const Service = () => {
 						className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-gray-600 [&_a]:text-[#1d2c57] [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"
 					/>
 				</div>
-			</section>
+			</motion.section>
 
 			<section className="bg-gray-100 p-10">
 				<div className="item mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-3">
 					{service.cards.map((item, index) => (
-						<div
+						<motion.div
 							key={`${item.title}-${index}`}
 							className="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm transition duration-300 hover:shadow-xl"
+							initial={{ opacity: 0, y: 24 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true, amount: 0.2 }}
+							transition={{ duration: 0.55, delay: index * 0.08, ease: "easeOut" }}
+							whileHover={{ y: -6, scale: 1.02 }}
 						>
 							<div className="mb-4 flex justify-center">
 								<ServiceIcon
@@ -99,7 +110,7 @@ const Service = () => {
 							<p className="leading-relaxed text-gray-600">
 								{item.description}
 							</p>
-						</div>
+						</motion.div>
 					))}
 				</div>
 			</section>

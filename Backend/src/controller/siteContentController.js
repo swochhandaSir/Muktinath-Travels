@@ -303,13 +303,43 @@ async function applyUploadedImages(payload, files) {
 	}
 }
 
+async function loadSiteContentDoc() {
+	return SiteContent.findOne({ key: "main" });
+}
+
+async function sendSiteContentSection(res, section) {
+	try {
+		const doc = await loadSiteContentDoc();
+		const content = mergeWithDefaults(doc);
+		res.json(content[section]);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+}
+
 export const getSiteContent = async (_req, res) => {
 	try {
-		const doc = await SiteContent.findOne({ key: "main" });
+		const doc = await loadSiteContentDoc();
 		res.json(mergeWithDefaults(doc));
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
+};
+
+export const getSiteContentHomeHero = async (_req, res) => {
+	await sendSiteContentSection(res, "homeHero");
+};
+
+export const getSiteContentAbout = async (_req, res) => {
+	await sendSiteContentSection(res, "about");
+};
+
+export const getSiteContentProcess = async (_req, res) => {
+	await sendSiteContentSection(res, "process");
+};
+
+export const getSiteContentService = async (_req, res) => {
+	await sendSiteContentSection(res, "service");
 };
 
 export const updateSiteContent = async (req, res) => {

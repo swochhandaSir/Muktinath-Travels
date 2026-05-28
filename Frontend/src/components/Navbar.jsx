@@ -35,12 +35,7 @@ const Navbar = () => {
               className="h-15 w-auto shrink-0"
             />
           ) : (
-            <Link
-              to="/"
-              className="truncate text-lg sm:text-xl font-bold text-slate-900"
-            >
-              {brandName}
-            </Link>
+            <div className="h-10 w-10 rounded-full bg-slate-200" />
           )}
         </div>
 
