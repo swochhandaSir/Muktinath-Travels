@@ -136,32 +136,41 @@ export const createBikeBooking = async (req, res) => {
 
 		const bikeExists = await Bike.exists({ _id: data.bike });
 		if (!bikeExists) {
-			return res.status(404).json({ message: "Bike not found." });
+			return res.status(404).json({
+				message: "Bike not found.",
+			});
 		}
 
 		const doc = await BikeBooking.create(data);
 		const populated = await doc.populate("bike", "name");
 
-		try {
-			await sendBookingConfirmationEmail({
-				bookingType: "Bike Rental",
-				itemName: populated.bike?.name || "Bike",
-				customerEmail: populated.customerEmail,
-				customerName: populated.customerName,
-				customerPhone: populated.customerPhone,
-				pickupDate: populated.pickupDate,
-				returnDate: populated.returnDate,
-				pickupLocation: populated.pickupLocation,
-				returnLocation: populated.returnLocation,
-				message: populated.message,
-			});
-		} catch (emailErr) {
-			console.error("Failed to send booking confirmation email:", emailErr);
-		}
-
 		res.status(201).json(toDTO(populated));
+
+		sendBookingConfirmationEmail({
+			bookingType: "Bike Rental",
+			itemName: populated.bike?.name || "Bike",
+			customerEmail: populated.customerEmail,
+			customerName: populated.customerName,
+			customerPhone: populated.customerPhone,
+			pickupDate: populated.pickupDate,
+			returnDate: populated.returnDate,
+			pickupLocation: populated.pickupLocation,
+			returnLocation: populated.returnLocation,
+			message: populated.message,
+		}).catch((emailErr) => {
+			console.error(
+				"Failed to send booking confirmation email:",
+				emailErr
+			);
+		});
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		console.error(err);
+
+		if (!res.headersSent) {
+			res.status(500).json({
+				message: err.message,
+			});
+		}
 	}
 };
 

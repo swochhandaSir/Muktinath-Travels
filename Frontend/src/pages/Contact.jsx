@@ -20,7 +20,7 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    phone: 0,
     subject: "",
     message: "",
   });

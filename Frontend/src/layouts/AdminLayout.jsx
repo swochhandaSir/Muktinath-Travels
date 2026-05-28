@@ -33,11 +33,9 @@ const navSections = [
   {
     title: "Dashboard",
     items: [
-      // { label: "Hero Section", icon: ImageIcon, href: "#" },
-      // { label: "About Section", icon: Info, href: "#" },
-      // { label: "Services", icon: Wrench, href: "#" },
       { label: "Home Page", icon: ImageIcon, to: "/dashboard/home" },
       { label: "About Page", icon: Info, to: "/dashboard/about" },
+      { label: "Service Page", icon: Wrench, to: "/dashboard/service" },
       { label: "Bikes", icon: Bike, to: "/dashboard/bikes" },
       {
         label: "Bike Bookings",
@@ -61,14 +59,6 @@ const navSections = [
         to: "/dashboard/contact",
       },
       { label: "Blog Posts", icon: BookOpen, to: "/dashboard/blogs" },
-      // { label: "Features", icon: Sparkles, href: "#" },
-      // { label: "Testimonials", icon: MessageSquareQuote, href: "#" },
-      // { label: "Counters", icon: Hash, href: "#" },
-      // { label: "Car Bookings", icon: CalendarDays, href: "#" },
-      // { label: "Tour Package Bookings", icon: ClipboardList, href: "#" },
-      // { label: "Contact Messages", icon: Mail, href: "#" },
-      // { label: "Branch", icon: MapPin, href: "#" },
-      // { label: "Site Settings", icon: Settings, href: "#" },
     ],
   },
 ];
