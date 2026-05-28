@@ -7,7 +7,7 @@ import { useSiteContent } from "../hooks/useSiteContent";
 
 const Home = () => {
 	const { openBookingForm } = useBooking();
-	const { content } = useSiteContent();
+	const { content } = useSiteContent("homeHero");
 	const hero = content.homeHero;
 	const heroBackground = hero.imageUrl || heroImage;
 

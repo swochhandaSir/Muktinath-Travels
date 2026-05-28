@@ -4,8 +4,6 @@ import { useState, } from "react";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
 
-
-
 export default function Contact() {
   const { details, loading } = useCompanyDetails();
   const [formData, setFormData] = useState({

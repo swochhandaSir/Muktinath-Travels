@@ -2,6 +2,10 @@ import express from "express";
 import multer from "multer";
 import {
 	getSiteContent,
+	getSiteContentHomeHero,
+	getSiteContentAbout,
+	getSiteContentProcess,
+	getSiteContentService,
 	updateSiteContent,
 } from "../controller/siteContentController.js";
 
@@ -39,6 +43,10 @@ function withSiteContentUpload(req, res, next) {
 }
 
 router.get("/", getSiteContent);
+router.get("/home-hero", getSiteContentHomeHero);
+router.get("/about", getSiteContentAbout);
+router.get("/process", getSiteContentProcess);
+router.get("/service", getSiteContentService);
 router.put("/", withSiteContentUpload, updateSiteContent);
 
 export default router;

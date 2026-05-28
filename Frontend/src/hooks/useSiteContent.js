@@ -1,26 +1,60 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiUrl } from "../lib/api";
 import { mergeSiteContent } from "../lib/siteContentDefaults";
 
-export function useSiteContent() {
-	const [content, setContent] = useState(() => mergeSiteContent(null));
+const SECTION_PATHS = {
+	homeHero: "home-hero",
+	about: "about",
+	process: "process",
+	service: "service",
+};
+
+export function useSiteContent(section) {
+	const defaultContent = useMemo(() => mergeSiteContent(null), []);
+	const [content, setContent] = useState(defaultContent);
 	const [loading, setLoading] = useState(true);
 
 	const loadSiteContent = useCallback(async () => {
 		setLoading(true);
 		try {
-			const res = await fetch(apiUrl("/api/site-content"));
+			const path = section
+				? `/api/site-content/${SECTION_PATHS[section] ?? section}`
+				: "/api/site-content";
+			const res = await fetch(apiUrl(path));
 			if (!res.ok) {
-				setContent(mergeSiteContent(null));
+				if (section) {
+					setContent((prev) => ({
+						...prev,
+						[section]: defaultContent[section],
+					}));
+				} else {
+					setContent(defaultContent);
+				}
 				return;
 			}
-			setContent(mergeSiteContent(await res.json()));
+
+			const data = await res.json();
+			if (section) {
+				setContent((prev) => ({
+					...prev,
+					[section]: { ...defaultContent[section], ...data },
+				}));
+			} else {
+				setContent(mergeSiteContent(data));
+			}
 		} catch {
-			setContent(mergeSiteContent(null));
+			if (section) {
+				setContent((prev) => ({
+					...prev,
+					[section]: defaultContent[section],
+				}));
+			} else {
+				setContent(defaultContent);
+			}
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [section, defaultContent]);
 
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useSiteContent } from "../hooks/useSiteContent";
 
 const ProcessSection = ({ data }) => {
-  const { content } = useSiteContent();
+  const { content } = useSiteContent("process");
   const process = data || content.process;
   const processSteps = process.steps.map((step, index) => ({
     ...step,
