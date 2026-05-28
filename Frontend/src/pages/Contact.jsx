@@ -1,10 +1,19 @@
 import { useCompanyDetails } from "../hooks/useCompanyDetails";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
-import { useState, } from "react";
+import { useState } from "react";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
+import {
+  validateEmailField,
+  validatePhoneField,
+  validateTextField,
+} from "../lib/formValidation";
 
+function FieldError({ message }) {
+  if (!message) return null;
 
+  return <p className="mt-1 text-xs text-red-600">{message}</p>;
+}
 
 export default function Contact() {
   const { details, loading } = useCompanyDetails();
@@ -15,20 +24,35 @@ export default function Contact() {
     subject: "",
     message: "",
   });
+  const [formErrors, setFormErrors] = useState({});
   const [submitStatus, setSubmitStatus] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
+
+    const nextErrors = {
+      name: validateTextField(formData.name, "Your name", { minLength: 3 }),
+      email: validateEmailField(formData.email),
+      phone: validatePhoneField(formData.phone, { required: false }),
+      message: validateTextField(formData.message, "Message"),
+    };
+
+    if (formData.subject.trim() && formData.subject.trim().length < 3) {
+      nextErrors.subject = "Subject must be at least 3 characters.";
+    }
+
+    setFormErrors(nextErrors);
+    if (Object.values(nextErrors).some(Boolean)) {
       setSubmitStatus({
         type: "error",
-        message: "Please fill in all required fields.",
+        message: "Please fix the highlighted fields.",
       });
       return;
     }
@@ -54,6 +78,7 @@ export default function Contact() {
         message: "Thank you! We'll get back to you soon.",
       });
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      setFormErrors({});
       setTimeout(() => setSubmitStatus(null), 5000);
     } catch (err) {
       setSubmitStatus({
@@ -116,8 +141,8 @@ export default function Contact() {
               {/* Phone */}
               {details?.contactPhone && (
                 <div className="flex gap-4 mb-6">
-                  <div className="flex-shrink-0">
-                    <Phone className="h-6 w-6 text-[var(--color-primary)]" />
+                  <div className="shrink-0">
+                    <Phone className="h-6 w-6 text-amber-500" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-slate-600">
@@ -125,7 +150,7 @@ export default function Contact() {
                     </p>
                     <a
                       href={`tel:${details.contactPhone}`}
-                      className="text-lg text-slate-950 font-semibold hover:text-[var(--color-primary)] transition"
+                      className="text-lg font-semibold text-slate-950 transition hover:text-amber-500"
                     >
                       {details.contactPhone}
                     </a>
@@ -136,8 +161,8 @@ export default function Contact() {
               {/* Email */}
               {details?.contactEmail && (
                 <div className="flex gap-4 mb-6">
-                  <div className="flex-shrink-0">
-                    <Mail className="h-6 w-6 text-[var(--color-primary)]" />
+                  <div className="shrink-0">
+                    <Mail className="h-6 w-6 text-amber-500" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-slate-600">
@@ -145,7 +170,7 @@ export default function Contact() {
                     </p>
                     <a
                       href={`mailto:${details.contactEmail}`}
-                      className="text-lg text-slate-950 font-semibold hover:text-[var(--color-primary)] transition break-all"
+                      className="text-lg font-semibold text-slate-950 transition hover:text-amber-500 break-all"
                     >
                       {details.contactEmail}
                     </a>
@@ -156,8 +181,8 @@ export default function Contact() {
               {/* Location */}
               {details?.location && (
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <MapPin className="h-6 w-6 text-[var(--color-primary)]" />
+                  <div className="shrink-0">
+                    <MapPin className="h-6 w-6 text-amber-500" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-slate-600">
@@ -194,7 +219,7 @@ export default function Contact() {
                     href={details.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition font-semibold text-sm"
+                    className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
                   >
                     <ExternalLink className="h-4 w-4" />
                     Facebook
@@ -205,7 +230,7 @@ export default function Contact() {
                     href={details.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition font-semibold text-sm"
+                    className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
                   >
                     <ExternalLink className="h-4 w-4" />
                     Instagram
@@ -216,7 +241,7 @@ export default function Contact() {
                     href={details.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition font-semibold text-sm"
+                    className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
                   >
                     <ExternalLink className="h-4 w-4" />
                     TikTok
@@ -260,10 +285,12 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Your Name"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
                   disabled={submitting}
+                  minLength={3}
                   required
                 />
+                <FieldError message={formErrors.name} />
               </div>
 
               {/* Email */}
@@ -277,10 +304,11 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Your Email"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
                   disabled={submitting}
                   required
                 />
+                <FieldError message={formErrors.email} />
               </div>
 
               {/* Phone */}
@@ -294,9 +322,13 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Your Phone"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
                   disabled={submitting}
+                  inputMode="numeric"
+                  maxLength={10}
+                  pattern="[0-9]*"
                 />
+                <FieldError message={formErrors.phone} />
               </div>
 
               {/* Subject */}
@@ -310,9 +342,10 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="Subject"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
                   disabled={submitting}
                 />
+                <FieldError message={formErrors.subject} />
               </div>
 
               {/* Message */}
@@ -326,25 +359,25 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Your Message"
                   rows="5"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none"
+                  className="w-full resize-none rounded-lg border border-slate-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-amber-500"
                   disabled={submitting}
+                  minLength={1}
                   required
                 ></textarea>
+                <FieldError message={formErrors.message} />
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full px-6 py-3 bg-[var(--color-primary)] text-white font-semibold rounded-lg hover:bg-[var(--color-primary-dark)] transition"
+                className="w-full rounded-lg bg-amber-500 px-6 py-3 font-semibold text-white transition hover:bg-amber-600"
               >
                 {submitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>
         </div>
-
-      
       </div>
     </div>
   );
