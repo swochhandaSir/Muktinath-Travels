@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import Modal from "./dashboard/Modal";
+import SubmissionSuccessPanel from "./SubmissionSuccessPanel";
 import { useBooking } from "../context/BookingContext";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
+import {
+  validateEmailField,
+  validatePhoneField,
+  validateTextField,
+} from "../lib/formValidation";
 
 const initialForm = {
   bike: "",
@@ -20,19 +26,11 @@ function validateBookingForm(values) {
   const errors = {};
 
   if (!values.bike.trim()) errors.bike = "Please select bike.";
-  if (!values.fullName.trim()) errors.fullName = "Full name is required.";
-
-  if (!values.email.trim()) {
-    errors.email = "Email is required.";
-  } else if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) {
-    errors.email = "Enter a valid email address.";
-  }
-
-  if (!values.phone.trim()) {
-    errors.phone = "Phone is required.";
-  } else if (!/^[0-9+\-()\s]{7,}$/.test(values.phone.trim())) {
-    errors.phone = "Enter a valid phone number.";
-  }
+  errors.fullName = validateTextField(values.fullName, "Full name", {
+    minLength: 3,
+  });
+  errors.email = validateEmailField(values.email);
+  errors.phone = validatePhoneField(values.phone);
 
   if (!values.pickupLocation.trim()) {
     errors.pickupLocation = "Pickup location is required.";
@@ -81,6 +79,16 @@ export default function BookingFormModal() {
     setSuccessMsg("");
     setSubmitError("");
   }, [isBookingOpen, selectedBike]);
+
+  useEffect(() => {
+    if (!successMsg) return;
+
+    const timer = window.setTimeout(() => {
+      closeBookingForm();
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [successMsg, closeBookingForm]);
 
   useEffect(() => {
     if (!isBookingOpen) return;
@@ -167,214 +175,227 @@ export default function BookingFormModal() {
     >
       <form className="mt-4 space-y-4" onSubmit={onSubmit} noValidate>
         {successMsg && (
-          <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
-            {successMsg}
-          </p>
+          <SubmissionSuccessPanel
+            title="Booking submitted"
+            message={successMsg}
+          />
         )}
 
-        {submitError && (
+        {!successMsg && submitError && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {submitError}
           </p>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="booking-bike"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Select Bike
-            </label>
-            <select
-              id="booking-bike"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              value={form.bike}
-              onChange={(e) => updateField("bike", e.target.value)}
-              disabled={submitting}
-            >
-              <option value="" disabled>
-                {loadingBikes ? "Loading bikes..." : "Choose your bike"}
-              </option>
-              {bikeOptions.map((bike) => {
-                const bikeName = bike?.name || "";
-                const bikeId = bike?.id || bike?._id || bikeName;
-                return (
-                  <option key={bikeId} value={bikeId}>
-                    {bikeName}
+        {!successMsg && (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="booking-bike"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Select Bike
+                </label>
+                <select
+                  id="booking-bike"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  value={form.bike}
+                  onChange={(e) => updateField("bike", e.target.value)}
+                  disabled={submitting}
+                >
+                  <option value="" disabled>
+                    {loadingBikes ? "Loading bikes..." : "Choose your bike"}
                   </option>
-                );
-              })}
-            </select>
-            <FieldError message={errors.bike} />
-          </div>
+                  {bikeOptions.map((bike) => {
+                    const bikeName = bike?.name || "";
+                    const bikeId = bike?.id || bike?._id || bikeName;
+                    return (
+                      <option key={bikeId} value={bikeId}>
+                        {bikeName}
+                      </option>
+                    );
+                  })}
+                </select>
+                <FieldError message={errors.bike} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-full-name"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Full Name
-            </label>
-            <input
-              id="booking-full-name"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="Enter your name"
-            value={form.fullName}
-            onChange={(e) => updateField("fullName", e.target.value)}
-            disabled={submitting}
-            />
-            <FieldError message={errors.fullName} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-full-name"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="booking-full-name"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="Enter your name"
+                  value={form.fullName}
+                  onChange={(e) => updateField("fullName", e.target.value)}
+                  disabled={submitting}
+                  minLength={3}
+                />
+                <FieldError message={errors.fullName} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-email"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Email
-            </label>
-            <input
-              id="booking-email"
-              type="email"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={(e) => updateField("email", e.target.value)}
-              disabled={submitting}
-            />
-            <FieldError message={errors.email} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-email"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="booking-email"
+                  type="email"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="Enter your email"
+                  value={form.email}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  disabled={submitting}
+                />
+                <FieldError message={errors.email} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-phone"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Phone
-            </label>
-            <input
-              id="booking-phone"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="Enter phone number"
-              value={form.phone}
-              onChange={(e) => updateField("phone", e.target.value)}
-              disabled={submitting}
-            />
-            <FieldError message={errors.phone} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-phone"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Phone
+                </label>
+                <input
+                  id="booking-phone"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="Enter phone number"
+                  value={form.phone}
+                  onChange={(e) => updateField("phone", e.target.value)}
+                  disabled={submitting}
+                  inputMode="numeric"
+                  maxLength={10}
+                  pattern="[0-9]*"
+                />
+                <FieldError message={errors.phone} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-pickup-location"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Pickup Location
-            </label>
-            <input
-              id="booking-pickup-location"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="Pickup location"
-              value={form.pickupLocation}
-              onChange={(e) => updateField("pickupLocation", e.target.value)}
-              disabled={submitting}
-            />
-            <FieldError message={errors.pickupLocation} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-pickup-location"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Pickup Location
+                </label>
+                <input
+                  id="booking-pickup-location"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="Pickup location"
+                  value={form.pickupLocation}
+                  onChange={(e) =>
+                    updateField("pickupLocation", e.target.value)
+                  }
+                  disabled={submitting}
+                />
+                <FieldError message={errors.pickupLocation} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-dropoff-location"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Dropoff Location
-            </label>
-            <input
-              id="booking-dropoff-location"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="Dropoff location"
-              value={form.dropoffLocation}
-              onChange={(e) => updateField("dropoffLocation", e.target.value)}
-              disabled={submitting}
-            />
-            <FieldError message={errors.dropoffLocation} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-dropoff-location"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Dropoff Location
+                </label>
+                <input
+                  id="booking-dropoff-location"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="Dropoff location"
+                  value={form.dropoffLocation}
+                  onChange={(e) =>
+                    updateField("dropoffLocation", e.target.value)
+                  }
+                  disabled={submitting}
+                />
+                <FieldError message={errors.dropoffLocation} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-pickup-date"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Pickup Date
-            </label>
-            <input
-              id="booking-pickup-date"
-              type="date"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="mm/dd/yyyy"
-              value={form.pickupDate}
-              onChange={(e) => updateField("pickupDate", e.target.value)}
-              disabled={submitting}
-            />
-            <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
-            <FieldError message={errors.pickupDate} />
-          </div>
+              <div>
+                <label
+                  htmlFor="booking-pickup-date"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Pickup Date
+                </label>
+                <input
+                  id="booking-pickup-date"
+                  type="date"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="mm/dd/yyyy"
+                  value={form.pickupDate}
+                  onChange={(e) => updateField("pickupDate", e.target.value)}
+                  disabled={submitting}
+                />
+                <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
+                <FieldError message={errors.pickupDate} />
+              </div>
 
-          <div>
-            <label
-              htmlFor="booking-return-date"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Return Date
-            </label>
-            <input
-              id="booking-return-date"
-              type="date"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-              placeholder="mm/dd/yyyy"
-              value={form.returnDate}
-              onChange={(e) => updateField("returnDate", e.target.value)}
-              disabled={submitting}
-            />
-            <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
-            <FieldError message={errors.returnDate} />
-          </div>
-        </div>
+              <div>
+                <label
+                  htmlFor="booking-return-date"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Return Date
+                </label>
+                <input
+                  id="booking-return-date"
+                  type="date"
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                  placeholder="mm/dd/yyyy"
+                  value={form.returnDate}
+                  onChange={(e) => updateField("returnDate", e.target.value)}
+                  disabled={submitting}
+                />
+                <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
+                <FieldError message={errors.returnDate} />
+              </div>
+            </div>
 
-        <div>
-          <label
-            htmlFor="booking-message"
-            className="block text-sm font-medium text-slate-700"
-          >
-            Message
-          </label>
-          <textarea
-            id="booking-message"
-            className="mt-1 min-h-24 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
-            placeholder="Message"
-            value={form.message}
-            onChange={(e) => updateField("message", e.target.value)}
-            disabled={submitting}
-          />
-        </div>
+            <div>
+              <label
+                htmlFor="booking-message"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Message
+              </label>
+              <textarea
+                id="booking-message"
+                className="mt-1 min-h-24 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+                placeholder="Message"
+                value={form.message}
+                onChange={(e) => updateField("message", e.target.value)}
+                disabled={submitting}
+              />
+            </div>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={closeBookingForm}
-            disabled={submitting}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-primary-dark)]"
-          >
-            {submitting ? "Submitting..." : "Submit Booking"}
-          </button>
-        </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={closeBookingForm}
+                disabled={submitting}
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"
+              >
+                {submitting ? "Submitting..." : "Submit Booking"}
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </Modal>
   );
