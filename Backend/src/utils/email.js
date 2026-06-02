@@ -86,6 +86,10 @@ export async function sendBookingConfirmationEmail({
 	numberOfPeople,
 	message,
 }) {
+	if (process.env.EMAIL_DISABLED === "true") {
+		return { disabled: true };
+	}
+
 	const mailOptions = {
 		from: EMAIL_FROM,
 		to: EMAIL_TO,

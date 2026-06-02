@@ -2,6 +2,7 @@
 import Modal from "./dashboard/Modal";
 import { usePackageBooking } from "../context/PackageBookingContext";
 import { apiUrl } from "../lib/api";
+import { focusFirstFormError, validatePhoneNumber } from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 const initialForm = {
@@ -27,11 +28,8 @@ function validatePackageBooking(values) {
     errors.email = "Enter a valid email address.";
   }
 
-  if (!values.phone.trim()) {
-    errors.phone = "Phone is required.";
-  } else if (!/^[0-9+\-()\s]{7,}$/.test(values.phone.trim())) {
-    errors.phone = "Enter a valid phone number.";
-  }
+  const phoneError = validatePhoneNumber(values.phone);
+  if (phoneError) errors.phone = phoneError;
 
   const people = Number.parseInt(values.numberOfPeople, 10);
   if (!Number.isFinite(people) || people < 1) {
@@ -60,7 +58,11 @@ function validatePackageBooking(values) {
 
 function FieldError({ message }) {
   if (!message) return null;
-  return <p className="mt-1 text-xs text-red-600">{message}</p>;
+  return (
+    <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">
+      {message}
+    </p>
+  );
 }
 
 export default function PackageBookingFormModal() {
@@ -96,7 +98,10 @@ export default function PackageBookingFormModal() {
       nextErrors.package = "Please select a package.";
     }
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) {
+      focusFirstFormError(e.currentTarget);
+      return;
+    }
 
     setSubmitting(true);
     setSubmitError("");
@@ -211,6 +216,10 @@ export default function PackageBookingFormModal() {
             </label>
             <input
               id="package-phone"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]{10}"
+              maxLength={10}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
               placeholder="Enter phone number"
               value={form.phone}
@@ -229,6 +238,9 @@ export default function PackageBookingFormModal() {
             </label>
             <input
               id="package-people"
+              type="number"
+              min="1"
+              step="1"
               inputMode="numeric"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
               placeholder="Enter number of people"

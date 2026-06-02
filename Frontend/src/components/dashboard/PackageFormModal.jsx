@@ -17,6 +17,7 @@ export default function PackageFormModal({
   onSubmit,
 }) {
   const isAdd = mode === "add";
+  const onlyDigits = (value) => value.replace(/\D/g, "");
 
   const updateItinerary = (index, field, value) => {
     onDraftChange((d) => ({
@@ -83,6 +84,7 @@ export default function PackageFormModal({
             value={item}
             onChange={(e) => updateListItem(keyName, index, e.target.value)}
             placeholder={placeholder}
+            required
             disabled={submitting}
           />
           <DashboardButton
@@ -121,7 +123,11 @@ export default function PackageFormModal({
     >
       <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         {formError && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+          <p
+            data-form-error
+            tabIndex={-1}
+            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+          >
             {formError}
           </p>
         )}
@@ -139,6 +145,7 @@ export default function PackageFormModal({
             }
             placeholder="Kathmandu to Illam Tour Package"
             autoComplete="off"
+            required
             disabled={submitting}
           />
         </div>
@@ -156,23 +163,57 @@ export default function PackageFormModal({
                 onDraftChange((d) => ({ ...d, location: e.target.value }))
               }
               placeholder="Illam"
+              required
               disabled={submitting}
             />
           </div>
           <div>
-            <label htmlFor="pkg-duration" className={labelClass}>
-              Duration
-            </label>
-            <input
-              id="pkg-duration"
-              className={inputClass}
-              value={draft.duration}
-              onChange={(e) =>
-                onDraftChange((d) => ({ ...d, duration: e.target.value }))
-              }
-              placeholder="4 Days-3 Nights"
-              disabled={submitting}
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="pkg-duration-days" className={labelClass}>
+                  Days
+                </label>
+                <input
+                  id="pkg-duration-days"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className={inputClass}
+                  value={draft.durationDays}
+                  onChange={(e) =>
+                    onDraftChange((d) => ({
+                      ...d,
+                      durationDays: onlyDigits(e.target.value),
+                    }))
+                  }
+                  placeholder="4"
+                  required
+                  disabled={submitting}
+                />
+              </div>
+              <div>
+                <label htmlFor="pkg-duration-nights" className={labelClass}>
+                  Nights
+                </label>
+                <input
+                  id="pkg-duration-nights"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className={inputClass}
+                  value={draft.durationNights}
+                  onChange={(e) =>
+                    onDraftChange((d) => ({
+                      ...d,
+                      durationNights: onlyDigits(e.target.value),
+                    }))
+                  }
+                  placeholder="3"
+                  required
+                  disabled={submitting}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -183,6 +224,9 @@ export default function PackageFormModal({
             </label>
             <input
               id="pkg-group-size"
+              type="number"
+              min="1"
+              step="1"
               inputMode="numeric"
               className={inputClass}
               value={draft.groupSize}
@@ -190,6 +234,7 @@ export default function PackageFormModal({
                 onDraftChange((d) => ({ ...d, groupSize: e.target.value }))
               }
               placeholder="11"
+              required
               disabled={submitting}
             />
           </div>
@@ -199,6 +244,9 @@ export default function PackageFormModal({
             </label>
             <input
               id="pkg-price"
+              type="number"
+              min="0"
+              step="0.01"
               inputMode="decimal"
               className={inputClass}
               value={draft.price}
@@ -206,6 +254,7 @@ export default function PackageFormModal({
                 onDraftChange((d) => ({ ...d, price: e.target.value }))
               }
               placeholder="10000"
+              required
               disabled={submitting}
             />
           </div>
@@ -226,6 +275,7 @@ export default function PackageFormModal({
               }))
             }
             placeholder="Describe the overall experience for this package"
+            required
             disabled={submitting}
           />
         </div>
@@ -245,6 +295,7 @@ export default function PackageFormModal({
             type="file"
             accept="image/*"
             className={inputClass}
+            required={isAdd}
             disabled={submitting}
           />
           {!isAdd && pkg?.image && (
@@ -286,6 +337,7 @@ export default function PackageFormModal({
                     updateItinerary(index, "dayNumber", e.target.value)
                   }
                   placeholder="Day 01"
+                  required
                   disabled={submitting}
                 />
               </div>
@@ -304,6 +356,7 @@ export default function PackageFormModal({
                     updateItinerary(index, "description", e.target.value)
                   }
                   placeholder="Journey from Kathmandu to Dharan"
+                  required
                   disabled={submitting}
                 />
               </div>

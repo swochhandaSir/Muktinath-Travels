@@ -47,7 +47,11 @@ export default function CompanyDetailsFormModal({
     >
       <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         {formError && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+          <p
+            data-form-error
+            tabIndex={-1}
+            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+          >
             {formError}
           </p>
         )}
@@ -72,6 +76,29 @@ export default function CompanyDetailsFormModal({
                   }))
                 }
                 placeholder={field.placeholder}
+                type={
+                  field.key === "contactEmail"
+                    ? "email"
+                    : field.key === "contactPhone" || field.key === "whatsapp"
+                      ? "tel"
+                      : "text"
+                }
+                inputMode={
+                  field.key === "contactPhone" || field.key === "whatsapp"
+                    ? "numeric"
+                    : undefined
+                }
+                pattern={
+                  field.key === "contactPhone" || field.key === "whatsapp"
+                    ? "[0-9]{10}"
+                    : undefined
+                }
+                maxLength={
+                  field.key === "contactPhone" || field.key === "whatsapp"
+                    ? 10
+                    : undefined
+                }
+                required={field.key === "name"}
                 autoComplete="off"
                 disabled={submitting}
               />

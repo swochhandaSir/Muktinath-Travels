@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiUrl } from "../lib/api";
+import {
+	focusFirstFormError,
+	validateImageFile,
+	validateOptionalMinText,
+	validatePhoneNumber,
+} from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 export function emptyCompanyDetailsDraft() {
@@ -34,6 +40,22 @@ export function companyDetailsToDraft(details) {
 
 function validateDraft(draft) {
 	if (!draft.name.trim()) return "Company name is required.";
+	if (draft.contactPhone.trim()) {
+		const phoneError = validatePhoneNumber(draft.contactPhone, {
+			label: "Phone",
+			required: false,
+		});
+		if (phoneError) return phoneError;
+	}
+	if (draft.whatsapp.trim()) {
+		const whatsappError = validatePhoneNumber(draft.whatsapp, {
+			label: "WhatsApp",
+			required: false,
+		});
+		if (whatsappError) return whatsappError;
+	}
+	const aboutError = validateOptionalMinText(draft.about, "About");
+	if (aboutError) return aboutError;
 	return null;
 }
 
@@ -122,10 +144,18 @@ export function useCompanyDetailsAdmin() {
 		const errMsg = validateDraft(draft);
 		if (errMsg) {
 			setFormError(errMsg);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 
 		const file = imageInputRef.current?.files?.[0];
+		const imageError = validateImageFile(file, { label: "Logo" });
+		if (imageError) {
+			setFormError(imageError);
+			focusFirstFormError(e.currentTarget);
+			return;
+		}
+
 		const fd = new FormData();
 		for (const [key, value] of Object.entries(draft)) {
 			fd.append(key, value.trim());

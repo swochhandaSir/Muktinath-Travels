@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { apiUrl } from "../lib/api";
 import { getHighResImage } from "../lib/image";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function stripHtml(html) {
   return String(html || "")
@@ -123,7 +124,7 @@ export default function BlogDetails() {
     return (
       <section className="min-h-[60vh] bg-background px-6 py-16">
         <div className="mx-auto flex min-h-[50vh] max-w-7xl items-center justify-center">
-          <p className="text-lg font-medium text-slate-600">Loading story...</p>
+          <LoadingSpinner label="Loading story..." size="lg" />
         </div>
       </section>
     );

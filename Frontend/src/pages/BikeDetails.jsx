@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { apiUrl } from "../lib/api";
 import { parseApiError } from "../lib/parseApiError";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const detailLabels = {
   model: "Model",
@@ -70,8 +71,8 @@ export default function BikeDetails() {
 
   if (loading) {
     return (
-      <section className="min-h-[60vh] bg-slate-50 px-4 py-20 text-center text-slate-600">
-        Loading bike details...
+      <section className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-4 py-20">
+        <LoadingSpinner label="Loading bike details..." size="lg" />
       </section>
     );
   }

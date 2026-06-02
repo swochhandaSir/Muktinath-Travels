@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { apiUrl } from "../lib/api";
 import { getHighResImage } from "../lib/image";
 import { usePackageBooking } from "../context/PackageBookingContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function SectionCard({ title, children }) {
   return (
@@ -51,8 +52,8 @@ export default function PackageDetails() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        Loading package details...
+      <div className="mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center px-6 py-16">
+        <LoadingSpinner label="Loading package details..." size="lg" />
       </div>
     );
   }

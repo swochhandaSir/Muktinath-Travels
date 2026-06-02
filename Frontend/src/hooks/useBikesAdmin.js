@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiUrl } from "../lib/api";
+import { focusFirstFormError, validateImageFile } from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 export function emptyBikeDraft() {
@@ -32,6 +33,18 @@ export function bikeToDraft(bike) {
 		engineCapacity: String(bike.engineCapacity ?? ""),
 		blueBookNumber: bike.blueBookNumber || "",
 	};
+}
+
+function validateRequiredText(value, label) {
+	return value.trim() ? "" : `${label} is required.`;
+}
+
+function validateNonNegativeNumber(value, label) {
+	const parsed = Number(value);
+	if (!String(value).trim() || !Number.isFinite(parsed) || parsed < 0) {
+		return `Enter a valid ${label}.`;
+	}
+	return "";
 }
 
 export function useBikesAdmin() {
@@ -182,24 +195,32 @@ export function useBikesAdmin() {
 			Array.from(input?.files || []),
 		);
 
-		if (!name) {
-			setFormError("Name is required.");
-			return;
-		}
-		if (!Number.isFinite(priceNum) || priceNum < 0) {
-			setFormError("Enter a valid price per day.");
-			return;
-		}
-		if (!Number.isFinite(mileageNum) || mileageNum < 0) {
-			setFormError("Enter a valid mileage.");
-			return;
-		}
-		if (!Number.isFinite(engineCapacityNum) || engineCapacityNum < 0) {
-			setFormError("Enter a valid engine capacity.");
-			return;
-		}
-		if (formModal.mode === "add" && !file) {
-			setFormError("Choose an image file.");
+		const validationError =
+			validateRequiredText(name, "Name") ||
+			validateRequiredText(draft.model, "Model") ||
+			validateRequiredText(draft.color, "Color") ||
+			validateRequiredText(draft.plateNumber, "Plate number") ||
+			validateRequiredText(draft.chassisNumber, "Chassis number") ||
+			validateRequiredText(draft.engineNumber, "Engine number") ||
+			validateRequiredText(draft.blueBookNumber, "Blue book number") ||
+			validateNonNegativeNumber(draft.price, "price per day") ||
+			validateNonNegativeNumber(draft.mileage, "mileage") ||
+			validateNonNegativeNumber(draft.engineCapacity, "engine capacity") ||
+			validateImageFile(file, {
+				label: "Bike image",
+				required: formModal.mode === "add",
+			}) ||
+			validateImageFile(licenseFile, { label: "License image" }) ||
+			blueBookFiles
+				.map((blueBookFile) =>
+					validateImageFile(blueBookFile, { label: "Bluebook image" }),
+				)
+				.find(Boolean) ||
+			"";
+
+		if (validationError) {
+			setFormError(validationError);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 

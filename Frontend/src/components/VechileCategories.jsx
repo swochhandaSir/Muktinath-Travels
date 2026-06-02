@@ -9,6 +9,7 @@ import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
 import { getHighResImage } from "../lib/image";
 import { useBooking } from "../context/BookingContext";
+import LoadingSpinner from "./LoadingSpinner";
 
 // we'll fetch bikes from the backend API; each bike has `name`, `pricePerDay`, `image`
 
@@ -140,7 +141,7 @@ const VechileCategories = () => {
           >
             {loading && (
               <SwiperSlide className="h-auto">
-                <div className="text-center py-10">Loading bikes...</div>
+                <LoadingSpinner label="Loading bikes..." className="py-10 px-0 md:px-110 lg:px-150" />
               </SwiperSlide>
             )}
 

@@ -8,6 +8,7 @@ import "swiper/css/navigation";
 import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
 import { getHighResImage } from "../lib/image";
+import LoadingSpinner from "./LoadingSpinner";
 
 const PackageCard = ({ pkg }) => {
   const rawPrice = pkg?.price;
@@ -168,7 +169,7 @@ function Packages() {
         >
           {loading && (
             <SwiperSlide className="h-auto">
-              <div className="text-center py-10">Loading packages...</div>
+              <LoadingSpinner label="Loading packages..." className="py-10 px-0 md:px-110 lg:px-150" />
             </SwiperSlide>
           )}
 
