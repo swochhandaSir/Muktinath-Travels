@@ -102,10 +102,14 @@ export default function DashboardAbout() {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		const saved = await siteContent.saveDraft("about", {
-			aboutPrimaryImage: primaryImageFile,
-			aboutSecondaryImage: secondaryImageFile,
-		});
+		const saved = await siteContent.saveDraft(
+			"about",
+			{
+				aboutPrimaryImage: primaryImageFile,
+				aboutSecondaryImage: secondaryImageFile,
+			},
+			e.currentTarget,
+		);
 		if (saved) setEditOpen(false);
 	};
 
@@ -169,14 +173,10 @@ export default function DashboardAbout() {
 										</p>
 									</td>
 									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">
-											{getPlainText(about.visionText)}
-										</p>
+										<p className="line-clamp-2">{getPlainText(about.visionText)}</p>
 									</td>
 									<td className="max-w-72 border border-slate-200 px-4 py-4 dark:border-slate-700">
-										<p className="line-clamp-2">
-											{getPlainText(about.missionText)}
-										</p>
+										<p className="line-clamp-2">{getPlainText(about.missionText)}</p>
 									</td>
 									<td className="border border-slate-200 px-4 py-4 dark:border-slate-700">
 										{about.experienceYears} {about.experienceLabel}
@@ -230,7 +230,11 @@ export default function DashboardAbout() {
 					onSubmit={onSubmit}
 				>
 					{siteContent.formError && (
-						<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+						<p
+							data-form-error
+							tabIndex={-1}
+							className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+						>
 							{siteContent.formError}
 						</p>
 					)}
@@ -275,10 +279,23 @@ export default function DashboardAbout() {
 								onChange={(e) => setPrimaryImageFile(e.target.files?.[0] || null)}
 								disabled={siteContent.submitting}
 							/>
-							<div className="text-sm text-slate-600 dark:text-slate-300">
+							<div className="min-w-0 flex-1">
+								<p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+									Current image:
+								</p>
+								<a
+									href={siteContent.draft.about.primaryImageUrl}
+									target="_blank"
+									rel="noreferrer"
+									className="text-xs text-[var(--color-primary)] underline dark:text-[var(--color-primary)]"
+								>
+									view image
+								</a>
+							</div>
+							{/* <div className="text-sm text-slate-600 dark:text-slate-300">
 								<p>current image:</p>
 								<p>{siteContent.draft.about.primaryImageUrl}</p>
-							</div>
+							</div> */}
 						</div>
 
 						<div>
@@ -296,10 +313,23 @@ export default function DashboardAbout() {
 								onChange={(e) => setSecondaryImageFile(e.target.files?.[0] || null)}
 								disabled={siteContent.submitting}
 							/>
-							<div className="text-sm text-slate-600 dark:text-slate-300">
+							<div className="min-w-0 flex-1">
+								<p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+									Current image
+								</p>
+								<a
+									href={siteContent.draft.about.secondaryImageUrl}
+									target="_blank"
+									rel="noreferrer"
+									className="text-xs text-[var(--color-primary)] underline dark:text-[var(--color-primary)]"
+								>
+									view image
+								</a>
+							</div>
+							{/* <div className="text-sm text-slate-600 dark:text-slate-300">
 								<p>secondary image:</p>
 								<p>{siteContent.draft.about.secondaryImageUrl}</p>
-							</div>
+							</div> */}
 						</div>
 					</div>
 

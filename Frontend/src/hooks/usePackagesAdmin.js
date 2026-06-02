@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiUrl } from "../lib/api";
+import {
+	focusFirstFormError,
+	validateImageFile,
+	validateMinText,
+} from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 export function emptyItineraryDay(index = 0) {
@@ -15,7 +20,8 @@ export function emptyPackageDraft() {
 	return {
 		title: "",
 		location: "",
-		duration: "",
+		durationDays: "",
+		durationNights: "",
 		groupSize: "",
 		price: "",
 		packageExperience: "",
@@ -25,11 +31,33 @@ export function emptyPackageDraft() {
 	};
 }
 
+function parseDuration(value) {
+	const text = String(value || "");
+	const dayMatch = text.match(/(\d+)\s*days?/i);
+	const nightMatch = text.match(/(\d+)\s*nights?/i);
+	const numbers = text.match(/\d+/g) || [];
+
+	return {
+		durationDays: dayMatch?.[1] || numbers[0] || "",
+		durationNights: nightMatch?.[1] || numbers[1] || "",
+	};
+}
+
+function formatDuration(days, nights) {
+	const dayCount = Number.parseInt(days, 10);
+	const nightCount = Number.parseInt(nights, 10);
+	const dayLabel = dayCount === 1 ? "Day" : "Days";
+	const nightLabel = nightCount === 1 ? "Night" : "Nights";
+	return `${dayCount} ${dayLabel}-${nightCount} ${nightLabel}`;
+}
+
 export function packageToDraft(pkg) {
+	const duration = parseDuration(pkg.duration);
 	return {
 		title: pkg.title,
 		location: pkg.location,
-		duration: pkg.duration,
+		durationDays: duration.durationDays,
+		durationNights: duration.durationNights,
 		groupSize: String(pkg.groupSize),
 		price: String(pkg.price),
 		packageExperience: pkg.packageExperience || "",
@@ -50,7 +78,8 @@ export function packageToDraft(pkg) {
 function validateDraft(draft) {
 	const title = draft.title.trim();
 	const location = draft.location.trim();
-	const duration = draft.duration.trim();
+	const durationDays = Number.parseInt(draft.durationDays, 10);
+	const durationNights = Number.parseInt(draft.durationNights, 10);
 	const groupSize = Number.parseInt(draft.groupSize, 10);
 	const priceNum = Number.parseFloat(draft.price);
 	const packageExperience = draft.packageExperience.trim();
@@ -67,15 +96,31 @@ function validateDraft(draft) {
 
 	if (!title) return "Title is required.";
 	if (!location) return "Location is required.";
-	if (!duration) return "Duration is required.";
+	if (!Number.isInteger(durationDays) || durationDays < 1) {
+		return "Enter a valid number of days.";
+	}
+	if (!Number.isInteger(durationNights) || durationNights < 0) {
+		return "Enter a valid number of nights.";
+	}
 	if (!Number.isFinite(groupSize) || groupSize < 1) {
 		return "Enter a valid group size (at least 1).";
 	}
 	if (!Number.isFinite(priceNum) || priceNum < 0) {
 		return "Enter a valid price.";
 	}
+	const experienceError = validateMinText(
+		packageExperience,
+		"Package experience",
+	);
+	if (experienceError) return experienceError;
 	if (itinerary.length === 0) {
 		return "Add at least one itinerary day with a description.";
+	}
+	const shortItineraryDay = itinerary.find(
+		(day) => day.description.length < 3,
+	);
+	if (shortItineraryDay) {
+		return "Itinerary descriptions must be at least 3 characters.";
 	}
 	if (tripHighlights.length === 0) {
 		return "Add at least one trip highlight.";
@@ -83,7 +128,6 @@ function validateDraft(draft) {
 	if (inclusions.length === 0) {
 		return "Add at least one inclusion.";
 	}
-	if (!packageExperience) return "Package experience is required.";
 	return null;
 }
 
@@ -167,12 +211,18 @@ export function usePackagesAdmin() {
 		const errMsg = validateDraft(draft);
 		if (errMsg) {
 			setFormError(errMsg);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 
 		const file = imageInputRef.current?.files?.[0];
-		if (formModal.mode === "add" && !file) {
-			setFormError("Choose an image file.");
+		const imageError = validateImageFile(file, {
+			label: "Package image",
+			required: formModal.mode === "add",
+		});
+		if (imageError) {
+			setFormError(imageError);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 
@@ -192,7 +242,10 @@ export function usePackagesAdmin() {
 		const fd = new FormData();
 		fd.append("title", draft.title.trim());
 		fd.append("location", draft.location.trim());
-		fd.append("duration", draft.duration.trim());
+		fd.append(
+			"duration",
+			formatDuration(draft.durationDays, draft.durationNights),
+		);
 		fd.append("groupSize", String(Number.parseInt(draft.groupSize, 10)));
 		fd.append("price", String(Number.parseFloat(draft.price)));
 		fd.append("itinerary", JSON.stringify(itinerary));

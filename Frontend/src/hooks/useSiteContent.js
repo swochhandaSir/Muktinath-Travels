@@ -17,37 +17,41 @@ export function useSiteContent(section) {
 	const loadSiteContent = useCallback(async () => {
 		setLoading(true);
 		try {
-			const path = section
+			const sectionPath = section
 				? `/api/site-content/${SECTION_PATHS[section] ?? section}`
-				: "/api/site-content";
-			const res = await fetch(apiUrl(path));
+				: null;
+			const res = await fetch(apiUrl(sectionPath || "/api/site-content"));
 			if (!res.ok) {
-				if (section) {
-					setContent((prev) => ({
-						...prev,
-						[section]: defaultContent[section],
-					}));
-				} else {
-					setContent(defaultContent);
-				}
-				return;
+				throw new Error("Failed to load site content.");
 			}
 
 			const data = await res.json();
 			if (section) {
+				const nextContent = mergeSiteContent({ [section]: data });
 				setContent((prev) => ({
 					...prev,
-					[section]: { ...defaultContent[section], ...data },
+					[section]: nextContent[section],
 				}));
 			} else {
 				setContent(mergeSiteContent(data));
 			}
 		} catch {
 			if (section) {
-				setContent((prev) => ({
-					...prev,
-					[section]: defaultContent[section],
-				}));
+				try {
+					const res = await fetch(apiUrl("/api/site-content"));
+					if (!res.ok) throw new Error("Failed to load site content.");
+					const nextContent = mergeSiteContent(await res.json());
+					setContent((prev) => ({
+						...prev,
+						[section]: nextContent[section],
+					}));
+					return;
+				} catch {
+					setContent((prev) => ({
+						...prev,
+						[section]: defaultContent[section],
+					}));
+				}
 			} else {
 				setContent(defaultContent);
 			}
@@ -57,7 +61,6 @@ export function useSiteContent(section) {
 	}, [section, defaultContent]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		loadSiteContent();
 	}, [loadSiteContent]);
 

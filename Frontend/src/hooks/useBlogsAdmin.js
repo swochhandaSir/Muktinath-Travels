@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiUrl } from "../lib/api";
+import {
+	focusFirstFormError,
+	isValidSlug,
+	validateImageFile,
+	validateMinText,
+} from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 export function emptyCommentItem() {
@@ -143,22 +149,40 @@ export function useBlogsAdmin() {
 
 		if (!title) {
 			setFormError("Title is required.");
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 		if (!slug) {
 			setFormError("Slug is required.");
+			focusFirstFormError(e.currentTarget);
+			return;
+		}
+		if (!isValidSlug(slug)) {
+			setFormError("Slug can only use lowercase letters, numbers, and hyphens.");
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 		if (!author) {
 			setFormError("Author is required.");
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
-		if (!plainTextFromHtml(description)) {
-			setFormError("Description is required.");
+		const descriptionError = validateMinText(
+			plainTextFromHtml(description),
+			"Description",
+		);
+		if (descriptionError) {
+			setFormError(descriptionError);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
-		if (formModal.mode === "add" && !file) {
-			setFormError("Choose an image file.");
+		const imageError = validateImageFile(file, {
+			label: "Blog image",
+			required: formModal.mode === "add",
+		});
+		if (imageError) {
+			setFormError(imageError);
+			focusFirstFormError(e.currentTarget);
 			return;
 		}
 

@@ -11,6 +11,7 @@ import {
 import { motion } from "motion/react";
 import { apiUrl } from "../lib/api";
 import { getHighResImage } from "../lib/image";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function stripHtml(html) {
   return String(html || "")
@@ -208,7 +209,7 @@ function Blog() {
 
         {loading && (
           <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-600 shadow-sm">
-            Loading blog posts...
+            <LoadingSpinner label="Loading blog posts..." />
           </div>
         )}
 

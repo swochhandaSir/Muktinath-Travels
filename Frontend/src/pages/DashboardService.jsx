@@ -9,7 +9,14 @@ import { formatDateTime } from "../components/dashboard/BikeBookingsTable";
 import { inputClass, labelClass } from "../components/dashboard/bikeFormStyles";
 import { useSiteContentAdmin } from "../hooks/useSiteContentAdmin";
 
-const iconOptions = ["Car", "ShieldCheck", "Headphones", "Users", "MapPin", "Briefcase"];
+const iconOptions = [
+	"Car",
+	"ShieldCheck",
+	"Headphones",
+	"Users",
+	"MapPin",
+	"Briefcase",
+];
 
 function getPlainText(html) {
 	return String(html || "")
@@ -92,9 +99,13 @@ export default function DashboardService() {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		const saved = await siteContent.saveDraft("service", {
-			serviceStatsBackgroundImage: statsBackgroundImageFile,
-		});
+		const saved = await siteContent.saveDraft(
+			"service",
+			{
+				serviceStatsBackgroundImage: statsBackgroundImageFile,
+			},
+			e.currentTarget,
+		);
 		if (saved) setEditOpen(false);
 	};
 
@@ -204,7 +215,11 @@ export default function DashboardService() {
 					onSubmit={onSubmit}
 				>
 					{siteContent.formError && (
-						<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+						<p
+							data-form-error
+							tabIndex={-1}
+							className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+						>
 							{siteContent.formError}
 						</p>
 					)}
@@ -252,10 +267,23 @@ export default function DashboardService() {
 							}
 							disabled={siteContent.submitting}
 						/>
-						<div className="text-sm text-slate-600 dark:text-slate-300">
+						<div className="min-w-0 flex-1">
+							<p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+								Current stats background image
+							</p>
+							<a
+								href={siteContent.draft.service.statsBackgroundImageUrl}
+								target="_blank"
+								rel="noreferrer"
+								className="text-xs text-[var(--color-primary)] underline dark:text-[var(--color-primary)]"
+							>
+								view image
+							</a>
+						</div>
+						{/* <div className="text-sm text-slate-600 dark:text-slate-300">
 							<p>current image:</p>
 							<p>{siteContent.draft.service.statsBackgroundImageUrl}</p>
-						</div>
+						</div> */}
 					</div>
 
 					<div className="space-y-3">
@@ -425,9 +453,7 @@ export default function DashboardService() {
 								id="service-reviews-heading"
 								className={inputClass}
 								value={siteContent.draft.service.reviewsHeading}
-								onChange={(e) =>
-									updateService("reviewsHeading", e.target.value)
-								}
+								onChange={(e) => updateService("reviewsHeading", e.target.value)}
 								disabled={siteContent.submitting}
 							/>
 						</div>
@@ -442,9 +468,7 @@ export default function DashboardService() {
 								id="service-reviews-description"
 								className={inputClass}
 								value={siteContent.draft.service.reviewsDescription}
-								onChange={(e) =>
-									updateService("reviewsDescription", e.target.value)
-								}
+								onChange={(e) => updateService("reviewsDescription", e.target.value)}
 								disabled={siteContent.submitting}
 							/>
 						</div>

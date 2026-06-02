@@ -11,6 +11,7 @@ import {
 	Users,
 } from "lucide-react";
 import { useSiteContent } from "../hooks/useSiteContent";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const iconMap = {
 	Briefcase,
@@ -56,9 +57,7 @@ const Service = () => {
 		return (
 			<section className="min-h-[60vh] bg-white px-6 py-16">
 				<div className="mx-auto flex max-w-7xl items-center justify-center">
-					<p className="text-lg font-medium text-gray-500">
-						Loading Service page...
-					</p>
+					<LoadingSpinner label="Loading service page..." size="lg" />
 				</div>
 			</section>
 		);

@@ -56,7 +56,11 @@ export default function BlogFormModal({
 		>
 			<form className="mt-4 space-y-4" onSubmit={onSubmit}>
 				{formError && (
-					<p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+					<p
+						data-form-error
+						tabIndex={-1}
+						className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+					>
 						{formError}
 					</p>
 				)}
@@ -72,6 +76,7 @@ export default function BlogFormModal({
 						onChange={(e) => onTitleChange(e.target.value)}
 						placeholder="Top 10 Tips for a Stress-Free Road Trip"
 						autoComplete="off"
+						required
 						disabled={submitting}
 					/>
 				</div>
@@ -90,6 +95,7 @@ export default function BlogFormModal({
 							}
 							placeholder="Jane Doe"
 							autoComplete="off"
+							required
 							disabled={submitting}
 						/>
 					</div>
@@ -106,6 +112,9 @@ export default function BlogFormModal({
 							}
 							placeholder="top-10-tips-stress-free-road-trip"
 							autoComplete="off"
+							pattern="[a-z0-9]+(-[a-z0-9]+)*"
+							title="Use lowercase letters, numbers, and single hyphens only."
+							required
 							disabled={submitting}
 						/>
 					</div>
@@ -126,6 +135,7 @@ export default function BlogFormModal({
 						type="file"
 						accept="image/*"
 						className={inputClass}
+						required={isAdd}
 						disabled={submitting}
 					/>
 					{!isAdd && blog?.image && (

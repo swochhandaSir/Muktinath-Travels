@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Bikes from "../pages/Bikes";
@@ -24,9 +25,20 @@ import DashboardAbout from "../pages/DashboardAbout";
 import DashboardService from "../pages/DashboardService";
 import DashboardLogin from "../pages/DashboardLogin";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+}
+
 function AppRouter() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/dashboard/login" element={<DashboardLogin />} />
         <Route element={<DashboardAuthGate />}>

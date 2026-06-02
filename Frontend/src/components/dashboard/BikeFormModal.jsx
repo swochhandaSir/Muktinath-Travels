@@ -41,12 +41,20 @@ export default function BikeFormModal({
     >
       <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         {formError && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+          <p
+            data-form-error
+            tabIndex={-1}
+            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+          >
             {formError}
           </p>
         )}
         {imageDeleteError && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300">
+          <p
+            data-form-error
+            tabIndex={-1}
+            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-300"
+          >
             {imageDeleteError}
           </p>
         )}
@@ -62,6 +70,7 @@ export default function BikeFormModal({
             onChange={(e) => updateDraft("name", e.target.value)}
             placeholder="Bike name"
             autoComplete="off"
+            required
             disabled={submitting}
           />
         </div>
@@ -72,11 +81,15 @@ export default function BikeFormModal({
           </label>
           <input
             id="bike-price"
+            type="number"
+            min="0"
+            step="0.01"
             inputMode="decimal"
             className={inputClass}
             value={draft.price}
             onChange={(e) => updateDraft("price", e.target.value)}
             placeholder="8000"
+            required
             disabled={submitting}
           />
         </div>
@@ -92,6 +105,7 @@ export default function BikeFormModal({
               value={draft.model}
               onChange={(e) => updateDraft("model", e.target.value)}
               placeholder="Duke 250"
+              required
               disabled={submitting}
             />
           </div>
@@ -105,6 +119,7 @@ export default function BikeFormModal({
               value={draft.color}
               onChange={(e) => updateDraft("color", e.target.value)}
               placeholder="Black"
+              required
               disabled={submitting}
             />
           </div>
@@ -121,6 +136,7 @@ export default function BikeFormModal({
               value={draft.plateNumber}
               onChange={(e) => updateDraft("plateNumber", e.target.value)}
               placeholder="BA 00 PA 0000"
+              required
               disabled={submitting}
             />
           </div>
@@ -134,6 +150,7 @@ export default function BikeFormModal({
               value={draft.blueBookNumber}
               onChange={(e) => updateDraft("blueBookNumber", e.target.value)}
               placeholder="Blue book number"
+              required
               disabled={submitting}
             />
           </div>
@@ -150,6 +167,7 @@ export default function BikeFormModal({
               value={draft.chassisNumber}
               onChange={(e) => updateDraft("chassisNumber", e.target.value)}
               placeholder="Chassis number"
+              required
               disabled={submitting}
             />
           </div>
@@ -163,6 +181,7 @@ export default function BikeFormModal({
               value={draft.engineNumber}
               onChange={(e) => updateDraft("engineNumber", e.target.value)}
               placeholder="Engine number"
+              required
               disabled={submitting}
             />
           </div>
@@ -175,11 +194,15 @@ export default function BikeFormModal({
             </label>
             <input
               id="bike-mileage"
+              type="number"
+              min="0"
+              step="0.01"
               inputMode="decimal"
               className={inputClass}
               value={draft.mileage}
               onChange={(e) => updateDraft("mileage", e.target.value)}
               placeholder="35"
+              required
               disabled={submitting}
             />
           </div>
@@ -189,11 +212,15 @@ export default function BikeFormModal({
             </label>
             <input
               id="bike-engine-capacity"
+              type="number"
+              min="0"
+              step="0.01"
               inputMode="decimal"
               className={inputClass}
               value={draft.engineCapacity}
               onChange={(e) => updateDraft("engineCapacity", e.target.value)}
               placeholder="250"
+              required
               disabled={submitting}
             />
           </div>
@@ -257,6 +284,7 @@ export default function BikeFormModal({
             type="file"
             accept="image/*"
             className={inputClass}
+            required={isAdd}
             disabled={submitting}
           />
           {!isAdd && bike?.licenseImage && (

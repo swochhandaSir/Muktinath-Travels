@@ -2,32 +2,56 @@ import { useCompanyDetails } from "../hooks/useCompanyDetails";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 import { useState, } from "react";
 import { apiUrl } from "../lib/api";
+import {
+  focusFirstFormError,
+  validateMinText,
+  validatePhoneNumber,
+} from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Contact() {
   const { details, loading } = useCompanyDetails();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: 0,
+    phone: "",
     subject: "",
     message: "",
   });
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
+    const nextErrors = {};
+    if (!formData.name.trim()) nextErrors.name = "Name is required.";
+    if (!formData.email.trim()) {
+      nextErrors.email = "Email is required.";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+    const phoneError = validatePhoneNumber(formData.phone, {
+      required: false,
+    });
+    if (phoneError) nextErrors.phone = phoneError;
+    const messageError = validateMinText(formData.message, "Message");
+    if (messageError) nextErrors.message = messageError;
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       setSubmitStatus({
         type: "error",
-        message: "Please fill in all required fields.",
+        message: "Please fix the highlighted fields.",
       });
+      focusFirstFormError(e.currentTarget);
       return;
     }
 
@@ -51,6 +75,7 @@ export default function Contact() {
         type: "success",
         message: "Thank you! We'll get back to you soon.",
       });
+      setErrors({});
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       setTimeout(() => setSubmitStatus(null), 5000);
     } catch (err) {
@@ -66,11 +91,7 @@ export default function Contact() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg text-slate-600">
-            Loading contact information...
-          </p>
-        </div>
+        <LoadingSpinner label="Loading contact information..." size="lg" />
       </div>
     );
   }
@@ -262,6 +283,9 @@ export default function Contact() {
                   disabled={submitting}
                   required
                 />
+                {errors.name && (
+                  <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.name}</p>
+                )}
               </div>
 
               {/* Email */}
@@ -279,6 +303,9 @@ export default function Contact() {
                   disabled={submitting}
                   required
                 />
+                {errors.email && (
+                  <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.email}</p>
+                )}
               </div>
 
               {/* Phone */}
@@ -292,9 +319,15 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Your Phone"
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  maxLength={10}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
                   disabled={submitting}
                 />
+                {errors.phone && (
+                  <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.phone}</p>
+                )}
               </div>
 
               {/* Subject */}
@@ -328,6 +361,9 @@ export default function Contact() {
                   disabled={submitting}
                   required
                 ></textarea>
+                {errors.message && (
+                  <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.message}</p>
+                )}
               </div>
 
               {/* Submit Button */}
