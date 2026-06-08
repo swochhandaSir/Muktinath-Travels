@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./dashboard/Modal";
 import { useBooking } from "../context/BookingContext";
 import { apiUrl } from "../lib/api";
-import { focusFirstFormError, validatePhoneNumber } from "../lib/formValidation";
+import { focusFirstFormError, validatePhoneNumber, validateMinText } from "../lib/formValidation";
 import { parseApiError } from "../lib/parseApiError";
 
 const initialForm = {
@@ -21,7 +21,8 @@ function validateBookingForm(values) {
   const errors = {};
 
   if (!values.bike.trim()) errors.bike = "Please select bike.";
-  if (!values.fullName.trim()) errors.fullName = "Full name is required.";
+  const nameError = validateMinText(values.fullName, "Full name");
+  if (nameError) errors.fullName = nameError;
 
   if (!values.email.trim()) {
     errors.email = "Email is required.";
@@ -38,8 +39,26 @@ function validateBookingForm(values) {
   if (!values.dropoffLocation.trim()) {
     errors.dropoffLocation = "Dropoff location is required.";
   }
-  if (!values.pickupDate) errors.pickupDate = "Pickup date is required.";
-  if (!values.returnDate) errors.returnDate = "Return date is required.";
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  if (!values.pickupDate) {
+    errors.pickupDate = "Pickup date is required.";
+  } else {
+    const pickup = new Date(values.pickupDate);
+    if (pickup < todayStart) {
+      errors.pickupDate = "Pickup date cannot be in the past.";
+    }
+  }
+
+  if (!values.returnDate) {
+    errors.returnDate = "Return date is required.";
+  } else {
+    const returnD = new Date(values.returnDate);
+    if (returnD < todayStart) {
+      errors.returnDate = "Return date cannot be in the past.";
+    }
+  }
 
   if (values.pickupDate && values.returnDate) {
     const pickup = new Date(values.pickupDate);
@@ -197,6 +216,7 @@ export default function BookingFormModal() {
               value={form.bike}
               onChange={(e) => updateField("bike", e.target.value)}
               disabled={submitting}
+              required
             >
               <option value="" disabled>
                 {loadingBikes ? "Loading bikes..." : "Choose your bike"}
@@ -228,6 +248,7 @@ export default function BookingFormModal() {
             value={form.fullName}
             onChange={(e) => updateField("fullName", e.target.value)}
             disabled={submitting}
+            required
             />
             <FieldError message={errors.fullName} />
           </div>
@@ -247,6 +268,7 @@ export default function BookingFormModal() {
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
               disabled={submitting}
+              required
             />
             <FieldError message={errors.email} />
           </div>
@@ -269,6 +291,7 @@ export default function BookingFormModal() {
               value={form.phone}
               onChange={(e) => updateField("phone", e.target.value)}
               disabled={submitting}
+              required
             />
             <FieldError message={errors.phone} />
           </div>
@@ -287,6 +310,7 @@ export default function BookingFormModal() {
               value={form.pickupLocation}
               onChange={(e) => updateField("pickupLocation", e.target.value)}
               disabled={submitting}
+              required
             />
             <FieldError message={errors.pickupLocation} />
           </div>
@@ -305,6 +329,7 @@ export default function BookingFormModal() {
               value={form.dropoffLocation}
               onChange={(e) => updateField("dropoffLocation", e.target.value)}
               disabled={submitting}
+              required
             />
             <FieldError message={errors.dropoffLocation} />
           </div>
@@ -324,6 +349,7 @@ export default function BookingFormModal() {
               value={form.pickupDate}
               onChange={(e) => updateField("pickupDate", e.target.value)}
               disabled={submitting}
+              required
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.pickupDate} />
@@ -344,6 +370,7 @@ export default function BookingFormModal() {
               value={form.returnDate}
               onChange={(e) => updateField("returnDate", e.target.value)}
               disabled={submitting}
+              required
             />
             <p className="mt-1 text-xs text-slate-500">mm/dd/yyyy</p>
             <FieldError message={errors.returnDate} />
@@ -364,6 +391,7 @@ export default function BookingFormModal() {
             value={form.message}
             onChange={(e) => updateField("message", e.target.value)}
             disabled={submitting}
+            required
           />
         </div>
 

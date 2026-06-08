@@ -32,16 +32,23 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = {};
-    if (!formData.name.trim()) nextErrors.name = "Name is required.";
+    const nameError = validateMinText(formData.name, "Name");
+    if (nameError) nextErrors.name = nameError;
+
     if (!formData.email.trim()) {
       nextErrors.email = "Email is required.";
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
       nextErrors.email = "Enter a valid email address.";
     }
+
     const phoneError = validatePhoneNumber(formData.phone, {
-      required: false,
+      required: true,
     });
     if (phoneError) nextErrors.phone = phoneError;
+
+    const subjectError = validateMinText(formData.subject, "Subject");
+    if (subjectError) nextErrors.subject = subjectError;
+
     const messageError = validateMinText(formData.message, "Message");
     if (messageError) nextErrors.message = messageError;
 
@@ -324,6 +331,7 @@ export default function Contact() {
                   maxLength={10}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
                   disabled={submitting}
+                  required
                 />
                 {errors.phone && (
                   <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.phone}</p>
@@ -343,7 +351,11 @@ export default function Contact() {
                   placeholder="Subject"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
                   disabled={submitting}
+                  required
                 />
+                {errors.subject && (
+                  <p data-field-error tabIndex={-1} className="mt-1 text-xs text-red-600">{errors.subject}</p>
+                )}
               </div>
 
               {/* Message */}

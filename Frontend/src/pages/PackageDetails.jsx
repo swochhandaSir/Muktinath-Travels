@@ -7,8 +7,10 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 function SectionCard({ title, children }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl font-bold text-slate-950">{title}</h2>
+    <section className="rounded-2xl border border-[var(--color-primary)] bg-white p-6 shadow-md">
+      <h2 className="text-2xl font-bold text-[var(--color-primary)]">
+        {title}
+      </h2>
       <div className="mt-4 text-slate-700">{children}</div>
     </section>
   );
@@ -98,7 +100,7 @@ export default function PackageDetails() {
               <h1 className="mt-3 text-4xl font-black leading-tight text-slate-950 md:text-5xl">
                 {pkg.title}
               </h1>
-             
+
               <p className="mt-4 text-2xl font-bold text-[var(--color-primary)]">
                 {priceDisplay}
               </p>
@@ -115,7 +117,9 @@ export default function PackageDetails() {
             </SectionCard>
 
             <SectionCard title="✨ Package Experience">
-              <p>{pkg.packageExperience || "Package experience coming soon."}</p>
+              <p>
+                {pkg.packageExperience || "Package experience coming soon."}
+              </p>
             </SectionCard>
           </div>
 
@@ -125,7 +129,9 @@ export default function PackageDetails() {
                 {tripHighlights.map((item) => (
                   <li key={item}>• {item}</li>
                 ))}
-                {tripHighlights.length === 0 && <li>Highlights coming soon.</li>}
+                {tripHighlights.length === 0 && (
+                  <li>Highlights coming soon.</li>
+                )}
               </ul>
             </SectionCard>
 
@@ -138,17 +144,17 @@ export default function PackageDetails() {
               </ul>
             </SectionCard>
 
-            <div className="rounded-2xl border border-[var(--color-primary)] bg-linear-to-br from-[var(--color-primary)] to-[var(--color-secondary)] p-6 text-white shadow-lg">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--color-primary-foreground)]">
+            <div className="rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] p-6 text-white shadow-2xl">
+              <p className="inline-block rounded-full bg-white/10 px-3 py-1 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
                 Book This Package
               </p>
-              <p className="mt-3 text-lg font-semibold">
+              <p className="mt-3 text-lg font-semibold text-white">
                 Secure your trip to {pkg.title} in just a few steps.
               </p>
               <button
                 type="button"
                 onClick={() => openPackageBookingForm(pkg)}
-                className="mt-5 rounded-full bg-white px-6 py-3 font-bold text-[var(--color-primary-dark)] transition hover:bg-[var(--color-primary)] hover:bg-opacity-10"
+                className="mt-5 w-full rounded-xl bg-white/95 px-6 py-3 font-bold text-[var(--color-primary)] shadow-lg transition-colors hover:brightness-95"
               >
                 Book Package
               </button>
