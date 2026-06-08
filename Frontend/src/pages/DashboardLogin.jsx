@@ -12,7 +12,7 @@ const DEFAULT_DASHBOARD_USERNAME = "Admin";
 export default function DashboardLogin() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [username, setUsername] = useState(DEFAULT_DASHBOARD_USERNAME);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +68,11 @@ export default function DashboardLogin() {
             </p>
           </div>
 
-          <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+          <form
+            className="mt-8 space-y-4"
+            onSubmit={handleSubmit}
+            autoComplete="off"
+          >
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-slate-300">
                 Username
@@ -77,7 +81,7 @@ export default function DashboardLogin() {
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                autoComplete="username"
+                autoComplete="off"
                 required
                 className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-slate-500 focus:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300/30"
               />
